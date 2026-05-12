@@ -21,6 +21,10 @@ OUT_SVG = os.environ.get(
     "OUT_SVG",
     os.path.join(WEBSITE_DIR, "unpins-logo.svg"),
 )
+OUT_FAVICON = os.environ.get(
+    "OUT_FAVICON",
+    os.path.join(WEBSITE_DIR, "favicon.svg"),
+)
 WEIGHT = 700          # Bold
 WORD = "unpins"
 
@@ -72,6 +76,35 @@ def find_right_stem_top(glyph, glyph_set):
     # Among them, choose the leftmost (the inner corner of the right stem cap).
     candidates.sort(key=lambda p: (-p[1], p[0]))
     return candidates[0]
+
+
+def inkscape_union(svg_path):
+    """Convert arrow strokes to filled paths and union them with the u glyph.
+
+    Operates on the IDs `u-glyph`, `arrow-1`, `arrow-2` — both the wordmark
+    and the favicon emit those IDs so the same union pass works for both.
+    """
+    import subprocess
+    actions = ";".join([
+        "select-by-id:arrow-1,arrow-2",
+        "object-stroke-to-path",
+        "select-by-id:u-glyph,arrow-1,arrow-2",
+        "path-union",
+        "export-overwrite",
+        "export-do",
+    ])
+    result = subprocess.run(
+        [
+            "inkscape", "--actions", actions,
+            "--export-type=svg",
+            "--export-plain-svg=false",
+            f"--export-filename={svg_path}",
+            svg_path,
+        ],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        print("Inkscape stderr:", result.stderr)
 
 
 def detect_stem_thickness(glyph, glyph_set):
@@ -250,27 +283,7 @@ def main():
     # Use Inkscape to (a) convert the arrow strokes to filled paths and
     # (b) union the 'u' glyph with the two arrow paths into a single path.
     # This way the gradient applied later flows across one continuous shape.
-    import subprocess
-    actions = ";".join([
-        "select-by-id:arrow-1,arrow-2",
-        "object-stroke-to-path",
-        "select-by-id:u-glyph,arrow-1,arrow-2",
-        "path-union",
-        "export-overwrite",
-        "export-do",
-    ])
-    result = subprocess.run(
-        [
-            "inkscape", "--actions", actions,
-            "--export-type=svg",
-            "--export-plain-svg=false",
-            f"--export-filename={svg_path}",
-            svg_path,
-        ],
-        capture_output=True, text=True,
-    )
-    if result.returncode != 0:
-        print("Inkscape stderr:", result.stderr)
+    inkscape_union(svg_path)
     print("Unioned u glyph with arrow paths into a single path")
 
     # Re-inject the gradient fill on the unioned u-glyph path: Inkscape drops
@@ -301,6 +314,58 @@ def main():
     with open(svg_path, "w") as f:
         f.write(svg_out)
     print("Re-applied gradient fill on u-glyph + injected theme-aware style")
+
+    # === Favicon: just the 'u' + arrow on a tight square viewBox ===
+    # Bounding box of the 'u' glyph alone.
+    u_pts = get_outline_points(u["glyph"], glyph_set)
+    u_min_x = min(p[0] for p in u_pts)
+    u_max_x = max(p[0] for p in u_pts)
+    u_min_y = min(p[1] for p in u_pts)
+    u_max_y = max(p[1] for p in u_pts)
+    # Arrow extends a half-stroke beyond its endpoints (round caps).
+    arrow_min_x = left_arm_end[0] - thick / 2
+    arrow_max_x = corner[0] + thick / 2
+    arrow_min_y = down_arm_end[1] - thick / 2
+    arrow_max_y = corner[1] + thick / 2
+    fav_min_x = min(u_min_x, arrow_min_x)
+    fav_max_x = max(u_max_x, arrow_max_x)
+    fav_min_y = min(u_min_y, arrow_min_y)
+    fav_max_y = max(u_max_y, arrow_max_y)
+    side = max(fav_max_x - fav_min_x, fav_max_y - fav_min_y)
+    fav_pad = side * 0.10
+    side_p = side + 2 * fav_pad
+    cx_box = (fav_min_x + fav_max_x) / 2
+    cy_box = (fav_min_y + fav_max_y) / 2
+    fav_vb_x = cx_box - side_p / 2
+    fav_vb_y = -(cy_box + side_p / 2)  # Y flipped (font Y-up → SVG Y-down)
+
+    fav_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="{fav_vb_x:.0f} {fav_vb_y:.0f} {side_p:.0f} {side_p:.0f}">
+  <defs>
+    <linearGradient id="logo-grad" gradientUnits="userSpaceOnUse" x1="{grad_x1}" y1="{grad_y1}" x2="{grad_x2:.0f}" y2="{grad_y2:.0f}">
+      <stop offset="0" stop-color="#0969da" />
+      <stop offset="1" stop-color="#3fb950" />
+    </linearGradient>
+  </defs>
+  <g transform="scale(1, -1)">
+    <path id="u-glyph" fill="url(#logo-grad)" d="{letters[0]["d"]}" />
+    <path id="arrow-1" d="{path1_d}" fill="none" stroke="url(#logo-grad)" stroke-width="{thick:.0f}" stroke-linecap="round" stroke-linejoin="round" />
+    <path id="arrow-2" d="{path2_d}" fill="none" stroke="url(#logo-grad)" stroke-width="{thick:.0f}" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>
+'''
+    with open(OUT_FAVICON, "w") as f:
+        f.write(fav_svg)
+    inkscape_union(OUT_FAVICON)
+    with open(OUT_FAVICON) as f:
+        fav_out = f.read()
+    fav_out = re.sub(
+        r'(<path\s+)id="u-glyph"',
+        r'\1id="u-glyph"\n       fill="url(#logo-grad)"',
+        fav_out, count=1,
+    )
+    with open(OUT_FAVICON, "w") as f:
+        f.write(fav_out)
+    print(f"Wrote {OUT_FAVICON}")
 
 
 if __name__ == "__main__":

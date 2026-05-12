@@ -13,6 +13,7 @@ plus the `unpin` CLI to install them.
 ├── packages.html       packages table (generated)
 ├── styles.css          shared styles
 ├── unpins-logo.svg     theme-aware wordmark (generated)
+├── favicon.svg         tab icon: 'u' + arrow (generated)
 ├── _redirects          /unpin-* → latest GitHub release asset
 ├── wrangler.toml       Cloudflare Workers config
 ├── .assetsignore       files excluded from the static-assets upload
@@ -21,8 +22,8 @@ plus the `unpin` CLI to install them.
 └── logo/build-logo.py  renders the SVG wordmark from JetBrains Mono
 ```
 
-The generated files (`unpins-logo.svg`, `packages.html`) are committed so the
-deploy needs no build step in CI.
+The generated files (`unpins-logo.svg`, `favicon.svg`, `packages.html`) are
+committed so the deploy needs no build step in CI.
 
 ## Build
 
