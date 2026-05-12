@@ -1,5 +1,11 @@
 # Cloudflare static-assets redirects. Format: <source> <destination> <status>.
 # `*` in the source is a splat; `:splat` in the destination reuses it.
+# First-match wins, so more-specific rules go above the splat.
+
+# Apple Silicon: `uname -m` on M-series Macs returns `arm64`, but our release
+# asset uses the Rust-triple `aarch64`. Alias so the install command on the
+# website resolves correctly without touching CI naming.
+/unpin-arm64-darwin  https://github.com/unpins/unpin/releases/latest/download/unpin-aarch64-darwin  302
 
 # `unpin` CLI binary downloads → latest GitHub release asset.
 /unpin-*  https://github.com/unpins/unpin/releases/latest/download/unpin-:splat  302
