@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>unpins — available packages</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="subpage">
+    <div class="container">
+      <header>
+        <h1><a href="index.html"><img src="unpins-logo.svg" alt="unpins" class="logo"></a></h1>
+      </header>
+
+      <p class="back"><a href="index.html">← Back to home</a></p>
+
+      <section>
+        <table class="pkg-table">
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>Version</th>
+              <th>License</th>
+              <th class="os">Linux</th>
+              <th class="os">macOS</th>
+              <th class="os">Windows</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="https://github.com/unpins/bash">bash</a></td><td class="version">5.3p3</td><td class="license">GPL-3.0-or-later</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os">—</td></tr>
+            <tr><td><a href="https://github.com/unpins/curl">curl</a></td><td class="version">8.19.0</td><td class="license">curl</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os yes">✓</td></tr>
+            <tr><td><a href="https://github.com/unpins/ffmpeg">ffmpeg</a></td><td class="version">8.0</td><td class="license">GPL-3.0-or-later</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os yes">✓</td></tr>
+            <tr><td><a href="https://github.com/unpins/git">git</a></td><td class="version">2.51.2</td><td class="license">GPL-2.0-only</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os">—</td></tr>
+            <tr><td><a href="https://github.com/unpins/htop">htop</a></td><td class="version">3.4.1</td><td class="license">GPL-2.0-only</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os">—</td></tr>
+            <tr><td><a href="https://github.com/unpins/jq">jq</a></td><td class="version">1.8.1</td><td class="license">MIT</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os yes">✓</td></tr>
+            <tr><td><a href="https://github.com/unpins/tmux">tmux</a></td><td class="version">3.6a</td><td class="license">BSD-3-Clause</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os">—</td></tr>
+            <tr><td><a href="https://github.com/unpins/tree">tree</a></td><td class="version">2.2.1</td><td class="license">GPL-2.0-or-later</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os">—</td></tr>
+            <tr><td><a href="https://github.com/unpins/unpin">unpin</a></td><td class="version">0.1.0</td><td class="license">—</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os yes">✓</td></tr>
+            <tr><td><a href="https://github.com/unpins/vim">vim</a></td><td class="version">9.2.0340</td><td class="license">Vim</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os yes">✓</td></tr>
+          </tbody>
+        </table>
+        <p class="pkg-note">
+          A few tools have no Windows row by design: the upstream architecture (e.g. <code>bash</code>'s fork-singleton, <code>git</code>'s POSIX assumptions) doesn't reduce cleanly to a single standalone <code>.exe</code>.
+        </p>
+      </section>
+
+      <footer>
+        <p>
+          The <code>unpin</code> CLI is MIT-licensed. Each tool above keeps its upstream license.<br>
+          View on <a href="https://github.com/unpins">GitHub</a>.
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+# Files to exclude from the Cloudflare Workers static-asset upload.
+# Same glob semantics as .gitignore.
+
+# Build scripts
+Makefile
+gen-packages.py
+logo/
+
+# Build intermediates
+target/
+
+# Config / repo bookkeeping
+wrangler.toml
+.assetsignore
+.gitignore
+.git/
+README.md

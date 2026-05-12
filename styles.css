@@ -1,0 +1,294 @@
+:root {
+  /* Light Theme (Default) */
+  --bg: #ffffff;
+  --text: #1f2328;
+  --accent: #0969da;
+  --code-bg: #f6f8fa;
+  --border: #d0d7de;
+  --tagline: #57606a;
+  --header-text: #1f2328;
+  --btn-bg: #ffffff;
+  --btn-border: #d0d7de;
+  --btn-hover-bg: #f3f4f6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark Theme */
+    --bg: #0d1117;
+    --text: #c9d1d9;
+    --accent: #58a6ff;
+    --code-bg: #161b22;
+    --border: #30363d;
+    --tagline: #8b949e;
+    --header-text: #ffffff;
+    --btn-bg: #21262d;
+    --btn-border: #30363d;
+    --btn-hover-bg: #30363d;
+  }
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+.container {
+  max-width: 800px;
+  width: 100%;
+}
+header {
+  margin-bottom: 4rem;
+  text-align: center;
+}
+h1 {
+  font-size: 3.5rem;
+  color: var(--header-text);
+  margin-bottom: 0.5rem;
+  letter-spacing: -2px;
+}
+h1 a {
+  color: inherit;
+  text-decoration: none;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+footer {
+  margin-top: 5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--tagline);
+}
+
+/* Wordmark image (theme-aware SVG: adapts to prefers-color-scheme on its own). */
+.logo {
+  display: block;
+  height: 8rem;
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Subpage tweaks: smaller header banner + logo (packages.html). */
+.subpage header {
+  margin-bottom: 3rem;
+}
+.subpage h1 {
+  font-size: 3rem;
+}
+.subpage .logo {
+  height: 5.3rem;
+}
+
+.tagline {
+  font-size: 1.25rem;
+  color: var(--tagline);
+}
+
+/* Install tabs (GitHub-style underline). The exclusive `name="install-tabs"`
+   attribute on each <details> keeps only one open at a time. We use
+   display:grid on the wrapper + display:contents on the details so all
+   summaries land on row 1 and the open body fills row 2. No nested borders. */
+.install-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, auto) 1fr;
+  align-items: end;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+}
+.install-tab {
+  display: contents;
+}
+/* Author `display: contents` overrides the UA `[hidden] { display: none }`.
+   Re-instate hiding so the JS-driven "show only matched platform" still works. */
+.install-tab[hidden] {
+  display: none;
+}
+.install-tab > summary {
+  grid-row: 1;
+  cursor: pointer;
+  padding: 0.6rem 1.1rem;
+  font-weight: 500;
+  color: var(--tagline);
+  list-style: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;        /* overlap the wrapper's bottom border */
+  user-select: none;
+  transition: color 0.15s;
+}
+.install-tab > summary::-webkit-details-marker {
+  display: none;
+}
+.install-tab > summary:hover {
+  color: var(--text);
+}
+.install-tab[open] > summary {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.install-tab > .install-tab-body {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  padding-top: 1rem;
+}
+
+.install-box-wrapper {
+  position: relative;
+  margin: 0 0 2rem 0;
+}
+/* Tighten the gap when an install-note follows the code block. */
+.install-box-wrapper:has(+ .install-note) {
+  margin-bottom: 0.5rem;
+}
+.install-box {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 8px;
+  font-family:
+    "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre;
+  font-size: 0.9rem;
+}
+.copy-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 6px;
+  color: var(--tagline);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.copy-btn:hover {
+  background: var(--btn-hover-bg);
+  color: var(--text);
+}
+.copy-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.comment {
+  color: var(--tagline);
+}
+.cmd {
+  color: var(--accent);
+}
+
+.install-note {
+  font-size: 0.85rem;
+  color: var(--tagline);
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+.features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+@media (max-width: 600px) {
+  .features {
+    grid-template-columns: 1fr;
+  }
+}
+.feature-card h3 {
+  color: var(--header-text);
+  margin-bottom: 0.5rem;
+}
+.feature-card p {
+  font-size: 0.9rem;
+}
+
+/* Packages page table */
+code {
+  background: var(--code-bg);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+/* Code inside the install-box is already styled by .install-box itself
+   (monospace + padding on the box); don't re-apply the pill background. */
+.install-box code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+.back {
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+.pkg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+.pkg-table th, .pkg-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.pkg-table th {
+  font-weight: 600;
+  color: var(--header-text);
+}
+.pkg-table th.os, .pkg-table td.os {
+  text-align: center;
+  width: 5.5rem;
+}
+.pkg-table td.os {
+  color: var(--tagline);
+}
+.pkg-table td.version {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  color: var(--tagline);
+  font-size: 0.9em;
+}
+.pkg-table td.license {
+  color: var(--tagline);
+  font-size: 0.9em;
+}
+.pkg-table td.yes {
+  color: #2da44e;
+  font-weight: 600;
+}
+.pkg-table tr:last-child td {
+  border-bottom: none;
+}
+.pkg-note {
+  font-size: 0.85rem;
+  color: var(--tagline);
+  margin-top: 1rem;
+}
