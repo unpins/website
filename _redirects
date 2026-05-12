@@ -1,0 +1,5 @@
+# Cloudflare static-assets redirects. Format: <source> <destination> <status>.
+# `*` in the source is a splat; `:splat` in the destination reuses it.
+
+# `unpin` CLI binary downloads → latest GitHub release asset.
+/unpin-*  https://github.com/unpins/unpin/releases/latest/download/unpin-:splat  302

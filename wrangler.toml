@@ -1,5 +1,9 @@
 name = "unpins"
 compatibility_date = "2025-01-01"
 
+routes = [
+  { pattern = "unpins.org", custom_domain = true }
+]
+
 [assets]
 directory = "./"
