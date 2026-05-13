@@ -100,57 +100,66 @@ footer {
   color: var(--tagline);
 }
 
-/* Install tabs (GitHub-style underline). The exclusive `name="install-tabs"`
-   attribute on each <details> keeps only one open at a time. We use
-   display:grid on the wrapper + display:contents on the details so all
-   summaries land on row 1 and the open body fills row 2. No nested borders. */
+/* Install tabs (GitHub-style underline). CSS-only tabs via hidden radio
+   inputs: the `:checked` state of one radio drives both the active label
+   styling and which pane is visible (using `~` sibling combinators). This
+   avoids `display: contents` on <details>, which misbehaves inside CSS
+   grid on mobile Chromium and pushed the install-box into the wrong cell. */
 .install-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, auto) 1fr;
-  align-items: end;
-  border-bottom: 1px solid var(--border);
   margin-bottom: 1.25rem;
 }
-.install-tab {
-  display: contents;
+/* Visually hide the radios but keep them focusable for keyboard users. */
+.install-tab-radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+  white-space: nowrap;
 }
-/* Author `display: contents` overrides the UA `[hidden] { display: none }`.
-   Re-instate hiding so the JS-driven "show only matched platform" still works. */
-.install-tab[hidden] {
-  display: none;
+.install-tab-labels {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
 }
-.install-tab > summary {
-  grid-row: 1;
+.install-tab-labels > label {
   cursor: pointer;
   padding: 0.6rem 1.1rem;
   font-weight: 500;
   color: var(--tagline);
-  list-style: none;
   border-bottom: 2px solid transparent;
-  margin-bottom: -1px;        /* overlap the wrapper's bottom border */
+  margin-bottom: -1px;        /* overlap the row's bottom border */
   user-select: none;
   transition: color 0.15s;
 }
-.install-tab > summary::-webkit-details-marker {
-  display: none;
-}
-.install-tab > summary:hover {
+.install-tab-labels > label:hover {
   color: var(--text);
 }
-.install-tab[open] > summary {
+.install-tab-pane {
+  display: none;
+  padding-top: 1rem;
+}
+#ip-linux:checked ~ .install-tab-labels > label[for="ip-linux"],
+#ip-macos:checked ~ .install-tab-labels > label[for="ip-macos"],
+#ip-windows:checked ~ .install-tab-labels > label[for="ip-windows"] {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
-.install-tab > .install-tab-body {
-  grid-row: 2;
-  grid-column: 1 / -1;
-  padding-top: 1rem;
-  /* Grid items default to min-width: auto, which sizes to intrinsic content
-     width. The install-box uses `white-space: pre`, so a long curl URL would
-     stretch this grid column past the viewport (breaking mobile layout).
-     min-width: 0 lets the column shrink and the install-box's overflow-x
-     handle the scrolling instead. */
-  min-width: 0;
+#ip-linux:checked ~ .install-tab-pane[data-platform="linux"],
+#ip-macos:checked ~ .install-tab-pane[data-platform="macos"],
+#ip-windows:checked ~ .install-tab-pane[data-platform="windows"] {
+  display: block;
+}
+/* Keyboard focus: outline the label whose radio is focused. */
+#ip-linux:focus-visible ~ .install-tab-labels > label[for="ip-linux"],
+#ip-macos:focus-visible ~ .install-tab-labels > label[for="ip-macos"],
+#ip-windows:focus-visible ~ .install-tab-labels > label[for="ip-windows"] {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 .install-box-wrapper {
@@ -253,7 +262,7 @@ footer {
     right: 0.5rem;
     padding: 0.35rem;
   }
-  .install-tab > summary {
+  .install-tab-labels > label {
     padding: 0.55rem 0.8rem;
   }
 }

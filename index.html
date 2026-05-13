@@ -93,9 +93,17 @@
         <h2 style="text-align: center; margin-bottom: 2rem;">Installation</h2>
 
         <div class="install-tabs">
-        <details class="install-tab" name="install-tabs" open>
-          <summary>Linux</summary>
-          <div class="install-tab-body">
+          <input type="radio" name="install-platform" id="ip-linux" class="install-tab-radio" checked>
+          <input type="radio" name="install-platform" id="ip-macos" class="install-tab-radio">
+          <input type="radio" name="install-platform" id="ip-windows" class="install-tab-radio">
+
+          <div class="install-tab-labels">
+            <label for="ip-linux">Linux</label>
+            <label for="ip-macos">macOS</label>
+            <label for="ip-windows">Windows</label>
+          </div>
+
+          <div class="install-tab-pane" data-platform="linux">
             <div class="install-box-wrapper">
               <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
                 <svg class="copy-icon" viewBox="0 0 24 24">
@@ -114,11 +122,8 @@
               Ensure <code>~/.local/bin</code> is in your PATH.
             </p>
           </div>
-        </details>
 
-        <details class="install-tab" name="install-tabs">
-          <summary>macOS</summary>
-          <div class="install-tab-body">
+          <div class="install-tab-pane" data-platform="macos">
             <div class="install-box-wrapper">
               <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
                 <svg class="copy-icon" viewBox="0 0 24 24">
@@ -137,11 +142,8 @@
               Ensure <code>~/.local/bin</code> is in your PATH.
             </p>
           </div>
-        </details>
 
-        <details class="install-tab" name="install-tabs">
-          <summary>Windows</summary>
-          <div class="install-tab-body">
+          <div class="install-tab-pane" data-platform="windows">
             <div class="install-box-wrapper">
               <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
                 <svg class="copy-icon" viewBox="0 0 24 24">
@@ -160,7 +162,6 @@
               Ensure <code>%LOCALAPPDATA%\unpin</code> is in your PATH.
             </p>
           </div>
-        </details>
         </div>
       </section>
 
