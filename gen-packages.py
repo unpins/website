@@ -3,7 +3,8 @@
 
 Scans sibling directories that contain a flake.nix and writes the full
 packages.html (styled via styles.css). Windows support is inferred from the
-flake referencing pkgsCross.mingwW64 or "windows-x86_64".
+flake setting `windows = true`, defining `windowsBuild = ...`, or exposing a
+`"windows-x86_64"` package output directly.
 """
 import os
 import re
@@ -22,18 +23,28 @@ EXCLUDE = {"nix-lib", "unpin-zig"}
 # channel, adjusted where build flags change the effective license
 # (e.g. ffmpeg with --enable-gpl --enable-version3 → GPL-3.0-or-later).
 LICENSE = {
-    "bash":   "GPL-3.0-or-later",
-    "curl":   "curl",
-    "ffmpeg": "GPL-3.0-or-later",
-    "git":    "GPL-2.0-only",
-    "htop":   "GPL-2.0-only",
-    "jq":     "MIT",
-    "tmux":   "BSD-3-Clause",
-    "tree":   "GPL-2.0-or-later",
-    "vim":    "Vim",
+    "bash":      "GPL-3.0-or-later",
+    "coreutils": "GPL-3.0-or-later",
+    "curl":      "curl",
+    "ffmpeg":    "GPL-3.0-or-later",
+    "git":       "GPL-2.0-only",
+    "gvim":      "Vim",
+    "htop":      "GPL-2.0-only",
+    "jq":        "MIT",
+    "tar":       "BSD-2-Clause",
+    "tmux":      "BSD-3-Clause",
+    "tree":      "GPL-2.0-or-later",
+    "unpin":     "MIT",
+    "vim":       "Vim",
 }
 
-WIN_RE = re.compile(r"pkgsCross\.mingwW64|windows-x86_64")
+# Markers that indicate a flake builds a Windows artifact:
+#   `windows = true;`        — mkStandaloneFlake flag → fixes-registry mingw build
+#   `windowsBuild = ...`     — consumer-supplied mingw build (curl, tree, vim, gvim)
+#   `"windows-x86_64"`       — explicit packages.<system> output (unpin)
+WIN_RE = re.compile(
+    r'windows\s*=\s*true\b|\bwindowsBuild\s*=|"windows-x86_64"'
+)
 
 
 def windows_supported(flake_path):
@@ -65,10 +76,12 @@ def get_version(pkg_dir):
     Fallback: parse a result symlink if one happens to be around.
     """
     try:
+        # 300s: gvim's static-GTK2 override cascade can take >120s to evaluate
+        # cold (six pkgsStatic overrides + two patches drag the eval down).
         r = subprocess.run(
             ["nix", "eval", "--raw",
              f"{pkg_dir}#packages.x86_64-linux.default.version"],
-            capture_output=True, text=True, timeout=120,
+            capture_output=True, text=True, timeout=300,
         )
         if r.returncode == 0 and r.stdout.strip():
             return r.stdout.strip()
