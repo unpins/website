@@ -84,20 +84,36 @@ footer {
   margin: 0 auto;
 }
 
-/* Subpage tweaks: smaller header banner + logo (packages.html). */
+/* Subpage tweaks: tighter header spacing (logo stays the same size as on
+   the home page for visual consistency). */
 .subpage header {
   margin-bottom: 3rem;
-}
-.subpage h1 {
-  font-size: 3rem;
-}
-.subpage .logo {
-  height: 5.3rem;
 }
 
 .tagline {
   font-size: 1.25rem;
   color: var(--tagline);
+}
+
+/* Top navigation: shown on every page below the logo. Replaces the
+   per-subpage "← Back to home" pattern and surfaces Docs prominently. */
+.topnav {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  font-size: 0.95rem;
+}
+.topnav a {
+  color: var(--text);
+}
+.topnav a:hover {
+  color: var(--accent);
+}
+.topnav a[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 /* Install tabs (GitHub-style underline). CSS-only tabs via hidden radio

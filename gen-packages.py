@@ -16,8 +16,9 @@ OUT_PATH = os.path.join(SCRIPT_DIR, "packages.html")
 
 # Directories that have a flake.nix but aren't end-user packages.
 #   nix-lib   — shared build glue, not a tool.
+#   cosmocc   — Cosmopolitan toolchain derivation (build dep, not a CLI).
 #   unpin-zig — alternate implementation of the unpin CLI itself.
-EXCLUDE = {"nix-lib", "unpin-zig"}
+EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig"}
 
 # SPDX license per package. Sourced from nixpkgs meta.license at the pinned
 # channel, adjusted where build flags change the effective license
@@ -141,9 +142,13 @@ PAGE = """<!DOCTYPE html>
     <div class="container">
       <header>
         <h1><a href="index.html"><img src="unpins-logo.svg" alt="unpins" class="logo"></a></h1>
+        <nav class="topnav">
+          <a href="packages.html" aria-current="page">Packages</a>
+          <a href="why.html">Why?</a>
+          <a href="https://github.com/unpins/docs">Docs</a>
+          <a href="https://github.com/unpins">GitHub</a>
+        </nav>
       </header>
-
-      <p class="back"><a href="index.html">← Back to home</a></p>
 
       <section>
         <table class="pkg-table">
@@ -168,8 +173,7 @@ PAGE = """<!DOCTYPE html>
 
       <footer>
         <p>
-          The <code>unpin</code> CLI is MIT-licensed. Each tool above keeps its upstream license.<br>
-          View on <a href="https://github.com/unpins">GitHub</a>.
+          The <code>unpin</code> CLI is MIT-licensed. Each tool above keeps its upstream license.
         </p>
       </footer>
     </div>
