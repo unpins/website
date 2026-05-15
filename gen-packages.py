@@ -27,6 +27,7 @@ LICENSE = {
     "coreutils": "GPL-3.0-or-later",
     "curl":      "curl",
     "ffmpeg":    "GPL-3.0-or-later",
+    "file":      "BSD-2-Clause",
     "git":       "GPL-2.0-only",
     "gvim":      "Vim",
     "htop":      "GPL-2.0-only",
