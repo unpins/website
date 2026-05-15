@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>unpins — why?</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="subpage">
+    <div class="container">
+      <header>
+        <h1><a href="index.html"><img src="unpins-logo.svg" alt="unpins" class="logo"></a></h1>
+      </header>
+
+      <p class="back"><a href="index.html">← Back to home</a></p>
+
+      <section>
+        <h2>The catalog — what's different</h2>
+        <p>
+          The unpins catalog is a curated set of common CLI tools that upstream doesn't ship as portable single-file binaries (see the <a href="packages.html">packages page</a> for the current list). We build them with Nix and publish one executable per OS. Four properties make these builds different from what you usually get:
+        </p>
+        <ul>
+          <li>
+            <strong>Single binary, no third-party shared libraries.</strong> CI rejects any artifact that imports a third-party DLL / dylib / so. Linux builds are <code>musl</code>-static; macOS depends only on libraries Apple guarantees (<code>libSystem</code>, frameworks, <code>libobjc</code>); Windows depends only on system DLLs in <code>System32</code>. Some tools need read-only data files — <code>vim</code>'s runtime scripts, for example — which ship in a separate <code>.tar.zst</code> next to the binary and are extracted by <code>unpin install</code>. The binary itself loads no third-party code at runtime.
+          </li>
+          <li>
+            <strong>Cross-OS parity from one recipe.</strong> The same Nix flake produces a Linux, macOS, and Windows build of the tool (when feasible — see "Scope and limits" below). When upstream fixes a bug, all three platforms get the fix from a single source change.
+          </li>
+          <li>
+            <strong>Runs on old systems.</strong> Linux binaries use <code>musl</code> and don't pin a glibc version, so they work on a 5-year-old Debian, a minimal Alpine container, or anything with a reasonable kernel API. No "this binary needs glibc 2.36" surprises.
+          </li>
+          <li>
+            <strong>Reproducible from source.</strong> Every catalog flake is public. Run <code>nix build github:unpins/htop</code> on your machine and you get a byte-identical binary. Don't trust our CI? Rebuild it.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>The CLI — a convenience layer</h2>
+        <p>
+          <code>unpin</code> is a small Rust binary that does one thing: fetch a GitHub release asset, verify its SHA256, and drop it in PATH with a normalized name. It has two install modes:
+        </p>
+        <ul>
+          <li>
+            <code>unpin install htop</code> — resolves to the unpins catalog (<code>unpins/htop</code>). You get our reproducible build with the properties above.
+          </li>
+          <li>
+            <code>unpin install jgm/pandoc</code> — installs from any <code>&lt;owner&gt;/&lt;repo&gt;</code>. You get whatever that upstream published; <code>unpin</code> picks the right asset for your OS / arch and verifies the SHA256, but doesn't audit the binary. The reproducibility and single-binary guarantees do <em>not</em> apply here.
+          </li>
+        </ul>
+        <p>
+          There are similar tools in this space — <a href="https://github.com/zyedidia/eget"><code>eget</code></a>, <a href="https://github.com/houseabsolute/ubi"><code>ubi</code></a>, <a href="https://github.com/devmatteini/dra"><code>dra</code></a>. The unpins CLI's main pluses are the aliased catalog and a one-line cross-OS bootstrap. The catalog is the part of unpins that's genuinely different.
+        </p>
+      </section>
+
+      <section>
+        <h2>How it compares</h2>
+        <p>The closest competitors in user mental model, and where unpins fits:</p>
+        <table class="pkg-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>unpins</th>
+              <th>Homebrew</th>
+              <th>Scoop</th>
+              <th>apt / dnf</th>
+              <th>eget / ubi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Cross-OS (Linux / macOS / Win)</td><td class="os yes">✓</td><td>macOS + Linux</td><td>Windows</td><td>one per distro</td><td class="os yes">✓</td></tr>
+            <tr><td>Runs on old systems</td><td class="os yes">✓</td><td>recent OS only</td><td>Win 10+</td><td>distro-bound</td><td>binary-dependent</td></tr>
+            <tr><td>Single binary, no third-party libs</td><td class="os yes">✓ enforced</td><td>varies</td><td>varies</td><td>shared libs</td><td>binary-dependent</td></tr>
+            <tr><td>Reproducible from source</td><td>✓ catalog</td><td>via taps</td><td>—</td><td>via source pkgs</td><td>—</td></tr>
+            <tr><td>Search / update-all</td><td>—</td><td class="os yes">✓</td><td class="os yes">✓</td><td class="os yes">✓</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Scope and limits</h2>
+        <ul>
+          <li>
+            <strong>We don't replace your distro / OS package manager.</strong> apt, dnf, brew still own the system pieces — libc, the kernel, X11, fonts. unpins focuses on user-space CLI tools.
+          </li>
+          <li>
+            <strong>Not every tool reduces to one binary.</strong> Some tools — <code>bash</code> on Windows, for instance — have upstream architectures that assume POSIX semantics or fork-exec patterns that don't fit a single <code>.exe</code>; those don't make the catalog. The <a href="packages.html">packages page</a> shows which platforms each tool supports.
+          </li>
+          <li>
+            <strong>Non-catalog installs are SHA256-pinned downloads, not audited builds.</strong> When you <code>unpin install &lt;owner&gt;/&lt;repo&gt;</code>, we don't rebuild or audit that binary — we trust the publisher. The reproducibility and single-binary guarantees apply only to the unpins catalog.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>How to verify yourself</h2>
+        <p>Every catalog flake is public on GitHub — inspect the build recipe and rebuild it locally:</p>
+        <div class="install-box-wrapper">
+          <div class="install-box"><code><span class="cmd">nix</span> build github:unpins/htop
+<span class="cmd">file</span> result/bin/htop      <span class="comment"># statically linked (Linux)</span>
+<span class="cmd">sha256sum</span> result/bin/htop  <span class="comment"># compare to the published release</span></code></div>
+        </div>
+        <p>
+          Read a flake to see exactly what we patch, what we link, and how the artifact is verified — start with <a href="https://github.com/unpins/htop/blob/main/flake.nix"><code>github:unpins/htop/flake.nix</code></a>. Shared build helpers are in <a href="https://github.com/unpins/nix-lib"><code>nix-lib</code></a>, CI workflows in <a href="https://github.com/unpins/action-build"><code>action-build</code></a>, and the project's technical documentation — architecture, the single-binary policy, per-platform notes, patch recipes, templates — in <a href="https://github.com/unpins/docs"><code>docs</code></a>.
+        </p>
+      </section>
+
+      <footer>
+        <p>
+          <a href="index.html">← Back to home</a> · <a href="packages.html">Packages</a> · <a href="https://github.com/unpins">GitHub</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

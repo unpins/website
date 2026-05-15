@@ -16,27 +16,27 @@
 
       <section class="features">
         <div class="feature-card">
-          <h3>Universal Package Installer</h3>
+          <h3>Single binary, no shared libraries</h3>
           <p>
-            Use the <code>unpin</code> command to manage your tools globally across any Linux, macOS, or Windows environment.
+            Every catalog tool ships as one executable — no third-party <code>.dll</code> / <code>.dylib</code> / <code>.so</code> alongside. A few (like <code>vim</code>) also ship a small read-only data archive — no code outside the binary.
           </p>
         </div>
         <div class="feature-card">
-          <h3>Zero Dependencies</h3>
+          <h3>Cross-OS from one recipe</h3>
           <p>
-            Stop waiting on your distro. <code>unpin install</code> drops each tool in PATH ready to run — no system dependencies, no root.
+            One Nix flake produces a Linux musl-static, a macOS native, and a Windows build of the same tool. Same source, three artifacts.
           </p>
         </div>
         <div class="feature-card">
-          <h3>GitHub Native</h3>
+          <h3>Reproducible from source</h3>
           <p>
-            Pulls each package straight from its GitHub release page. Leverages the infrastructure you already trust.
+            Rebuild any catalog binary byte-identical with <code>nix build github:unpins/&lt;pkg&gt;</code>. The flake is public — verify what you run.
           </p>
         </div>
         <div class="feature-card">
-          <h3>Pre-compiled Binaries</h3>
+          <h3>Plus a CLI to install them</h3>
           <p>
-            A curated set of ready-to-install binaries, built reproducibly with Nix.
+            The <code>unpin</code> command picks the right asset for your OS, verifies the SHA256, and drops it in PATH. Catalog or any GitHub release.
           </p>
         </div>
       </section>
@@ -172,23 +172,12 @@
       </section>
 
       <section style="margin-top: 5rem;">
-        <h2 style="text-align: center; margin-bottom: 2rem;">About</h2>
+        <h2 style="text-align: center; margin-bottom: 2rem;">How it works</h2>
         <p>
-          <strong>unpins</strong> publishes portable, statically-linked builds of essential command-line tools — the same artifact runs on Debian, Alpine, macOS, and (where viable) Windows. Each build is reproducible with <strong>Nix Flakes</strong>: inputs are pinned, the output is auditable, and the recipe lives in a public flake you can rebuild yourself.
+          Each tool in the catalog lives in its own public repo at <a href="https://github.com/unpins">github.com/unpins</a>, with a Nix flake that defines the build. CI builds it on three OSes, enforces the single-binary policy, and publishes the artifacts to that repo's GitHub release page. The <code>unpin</code> CLI is a thin installer on top of that.
         </p>
-        <p>The project is split across small, focused repos:</p>
-        <ul>
-          <li><a href="https://github.com/unpins/unpin"><code>unpin</code></a> — the CLI that fetches a binary from GitHub releases and drops it in PATH.</li>
-          <li>One repo per <a href="packages.html">packaged tool</a> — one flake, one binary.</li>
-          <li><a href="https://github.com/unpins/nix-lib"><code>nix-lib</code></a> and <a href="https://github.com/unpins/action-build"><code>action-build</code></a> — shared build helpers used by the package repos.</li>
-        </ul>
-        <p>Everything lives under <a href="https://github.com/unpins">github.com/unpins</a>.</p>
-      </section>
-
-      <section style="margin-top: 5rem; text-align: center;">
-        <h2 style="margin-bottom: 1rem;">Status</h2>
         <p>
-          The <code>unpin</code> CLI works today. We're actively adding more packages.
+          For the longer story — what's actually different from Homebrew, Scoop, or your distro, how to verify a build yourself, and what we deliberately don't do — see <a href="why.html">Why unpins?</a>
         </p>
       </section>
 
