@@ -3,8 +3,9 @@
 
 Scans sibling directories that contain a flake.nix and writes the full
 packages.html (styled via styles.css). Windows support is inferred from the
-flake setting `windows = true`, defining `windowsBuild = ...`, or exposing a
-`"windows-x86_64"` package output directly.
+flake setting `windows = true` (mingw path) or `windowsCosmo = true` (cosmo
+path), defining `windowsBuild = ...`, or exposing a `"windows-x86_64"`
+package output directly.
 """
 import os
 import re
@@ -47,10 +48,11 @@ LICENSE = {
 
 # Markers that indicate a flake builds a Windows artifact:
 #   `windows = true;`        — mkStandaloneFlake flag → fixes-registry mingw build
-#   `windowsBuild = ...`     — consumer-supplied mingw build (curl, tree, vim, gvim)
+#   `windowsCosmo = true;`   — mkStandaloneFlake flag → cosmo cross build (coreutils)
+#   `windowsBuild = ...`     — consumer-supplied build (curl, tree, vim, gvim)
 #   `"windows-x86_64"`       — explicit packages.<system> output (unpin)
 WIN_RE = re.compile(
-    r'windows\s*=\s*true\b|\bwindowsBuild\s*=|"windows-x86_64"'
+    r'\bwindows(Cosmo)?\s*=\s*true\b|\bwindowsBuild\s*=|"windows-x86_64"'
 )
 
 

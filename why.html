@@ -86,7 +86,7 @@
         <h2>Scope and limits</h2>
         <ul>
           <li>
-            <strong>We don't replace your distro / OS package manager.</strong> apt, dnf, brew still own the system pieces — libc, the kernel, X11, fonts. unpins focuses on user-space CLI tools.
+            <strong>We don't replace your OS package manager.</strong> apt, dnf, brew still own the system pieces — libc, the kernel, X11, fonts. unpins focuses on user-space CLI tools.
           </li>
           <li>
             <strong>Not every tool reduces to one binary.</strong> Some tools — <code>bash</code> on Windows, for instance — have upstream architectures that assume POSIX semantics or fork-exec patterns that don't fit a single <code>.exe</code>; those don't make the catalog. The <a href="packages.html">packages page</a> shows which platforms each tool supports.
