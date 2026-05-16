@@ -33,11 +33,16 @@ LICENSE = {
     "gvim":      "Vim",
     "htop":      "GPL-2.0-only",
     "jq":        "MIT",
+    "less":      "GPL-3.0-or-later",
+    "make":      "GPL-3.0-or-later",
+    "nano":      "GPL-3.0-or-later",
     "tar":       "BSD-2-Clause",
     "tmux":      "BSD-3-Clause",
     "tree":      "GPL-2.0-or-later",
     "unpin":     "MIT",
     "vim":       "Vim",
+    "xz":        "0BSD",
+    "zstd":      "BSD-3-Clause",
 }
 
 # Markers that indicate a flake builds a Windows artifact:
