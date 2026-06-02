@@ -120,12 +120,12 @@
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </button>
-              <div class="install-box"><code><span class="cmd">mkdir</span> -p ~/.local/bin
-<span class="cmd">curl</span> -fsSLo ~/.local/bin/unpin "https://unpins.org/unpin-$(uname -m)-linux"
-<span class="cmd">chmod</span> +x ~/.local/bin/unpin</code></div>
+              <div class="install-box"><code><span class="cmd">curl</span> -fsSLo unpin "https://unpins.org/unpin-$(uname -m)-linux"
+<span class="cmd">chmod</span> +x unpin
+<span class="cmd">./unpin</span> install</code></div>
             </div>
             <p class="install-note">
-              Ensure <code>~/.local/bin</code> is in your PATH.
+              <code>unpin install</code> moves the binary into <code>~/.local/bin</code> and offers to add it to your PATH. Open a new shell afterwards.
             </p>
           </div>
 
@@ -140,12 +140,12 @@
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </button>
-              <div class="install-box"><code><span class="cmd">mkdir</span> -p ~/.local/bin
-<span class="cmd">curl</span> -fsSLo ~/.local/bin/unpin "https://unpins.org/unpin-$(uname -m)-darwin"
-<span class="cmd">chmod</span> +x ~/.local/bin/unpin</code></div>
+              <div class="install-box"><code><span class="cmd">curl</span> -fsSLo unpin "https://unpins.org/unpin-$(uname -m)-darwin"
+<span class="cmd">chmod</span> +x unpin
+<span class="cmd">./unpin</span> install</code></div>
             </div>
             <p class="install-note">
-              Ensure <code>~/.local/bin</code> is in your PATH.
+              <code>unpin install</code> moves the binary into <code>~/.local/bin</code> and offers to add it to your PATH. Open a new shell afterwards.
             </p>
           </div>
 
@@ -160,12 +160,11 @@
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </button>
-              <div class="install-box"><code>$DEST="$env:LOCALAPPDATA\unpin"
-<span class="cmd">mkdir</span> $DEST -Force > $null
-<span class="cmd">irm</span> https://unpins.org/unpin-x86_64-windows.exe -OutFile "$DEST\unpin.exe"</code></div>
+              <div class="install-box"><code><span class="cmd">curl.exe</span> -fsSLo unpin.exe https://unpins.org/unpin-x86_64-windows.exe
+<span class="cmd">.\unpin.exe</span> install</code></div>
             </div>
             <p class="install-note">
-              Ensure <code>%LOCALAPPDATA%\unpin</code> is in your PATH.
+              <code>unpin install</code> moves it into <code>%LOCALAPPDATA%\unpin</code> and offers to add it to your PATH. Open a new terminal afterwards.
             </p>
           </div>
         </div>
