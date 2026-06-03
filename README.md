@@ -2,7 +2,7 @@
 
 Source for [unpins.org](https://unpins.org) — the landing page for
 [unpins](https://github.com/unpins): portable, statically-linked builds of
-common command-line tools that run unchanged on Linux, macOS, and Windows,
+common programs that run unchanged on Linux, macOS, and Windows,
 plus the `unpin` CLI to install them.
 
 ## Layout

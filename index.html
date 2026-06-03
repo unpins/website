@@ -24,13 +24,13 @@
         <div class="feature-card">
           <h3>Single binary, no shared libraries</h3>
           <p>
-            Every catalog tool ships as one executable — no third-party <code>.dll</code> / <code>.dylib</code> / <code>.so</code> alongside. A few (like <code>vim</code>) also ship a small read-only data archive — no code outside the binary.
+            Every catalog program ships as one executable — no third-party <code>.dll</code> / <code>.dylib</code> / <code>.so</code> alongside. A few (like <code>vim</code>) also ship a small read-only data archive — no code outside the binary.
           </p>
         </div>
         <div class="feature-card">
           <h3>Cross-OS from one recipe</h3>
           <p>
-            One Nix flake produces a Linux musl-static, a macOS native, and a Windows build of the same tool. Same source, three artifacts.
+            One Nix flake produces a Linux musl-static, a macOS native, and a Windows build of the same program. Same source, three artifacts.
           </p>
         </div>
         <div class="feature-card">
@@ -50,7 +50,7 @@
       <section class="usage-examples">
         <h2 style="text-align: center; margin-bottom: 2rem;">Usage Examples</h2>
 
-        <p>Install standard tools like <strong>htop</strong>:</p>
+        <p>Install standard programs like <strong>htop</strong>:</p>
         <div class="install-box-wrapper" style="margin-top: 1rem;">
           <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
             <svg class="copy-icon" viewBox="0 0 24 24">
@@ -65,7 +65,7 @@
 <span class="cmd">htop</span> <span class="comment"># Ready to run!</span></code></div>
         </div>
 
-        <p>Or install specific tools directly from their GitHub repositories, such as <strong>jgm/pandoc</strong>:</p>
+        <p>Or install specific programs directly from their GitHub repositories, such as <strong>jgm/pandoc</strong>:</p>
         <div class="install-box-wrapper" style="margin-top: 1rem;">
           <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
             <svg class="copy-icon" viewBox="0 0 24 24">
@@ -172,14 +172,14 @@
 
       <section style="margin-top: 5rem; text-align: center;">
         <h2 style="margin-bottom: 1rem;">Available Packages</h2>
-        <p>Single-binary builds of common tools for Linux, macOS, and (where viable) Windows.</p>
+        <p>Single-binary builds of common programs for Linux, macOS, and (where viable) Windows.</p>
         <p><a href="packages.html">See the full list →</a></p>
       </section>
 
       <section style="margin-top: 5rem;">
         <h2 style="text-align: center; margin-bottom: 2rem;">How it works</h2>
         <p>
-          Each tool in the catalog lives in its own public repo at <a href="https://github.com/unpins">github.com/unpins</a>, with a Nix flake that defines the build. CI builds it on three OSes, enforces the single-binary policy, and publishes the artifacts to that repo's GitHub release page. The <code>unpin</code> CLI is a thin installer on top of that.
+          Each program in the catalog lives in its own public repo at <a href="https://github.com/unpins">github.com/unpins</a>, with a Nix flake that defines the build. CI builds it on three OSes, enforces the single-binary policy, and publishes the artifacts to that repo's GitHub release page. The <code>unpin</code> CLI is a thin installer on top of that.
         </p>
         <p>
           For the longer story — what's actually different from Homebrew, Scoop, or your system package manager, how to verify a build yourself, and what we deliberately don't do — see <a href="why.html">Why unpins?</a>
@@ -188,7 +188,7 @@
 
       <footer>
         <p>
-          The <code>unpin</code> CLI is MIT-licensed. Packaged tools keep their upstream licenses — see <a href="packages.html">the packages page</a>.
+          The <code>unpin</code> CLI is MIT-licensed. Packaged programs keep their upstream licenses — see <a href="packages.html">the packages page</a>.
         </p>
       </footer>
     </div>

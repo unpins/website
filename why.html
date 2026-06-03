@@ -22,14 +22,14 @@
       <section>
         <h2>The catalog — what's different</h2>
         <p>
-          The unpins catalog is a curated set of common CLI tools that upstream doesn't ship as portable single-file binaries (see the <a href="packages.html">packages page</a> for the current list). We build them with Nix and publish one executable per OS. Four properties make these builds different from what you usually get:
+          The unpins catalog is a curated set of common programs that upstream doesn't ship as portable single-file binaries (see the <a href="packages.html">packages page</a> for the current list). We build them with Nix and publish one executable per OS. Four properties make these builds different from what you usually get:
         </p>
         <ul>
           <li>
-            <strong>Single binary, no third-party shared libraries.</strong> CI rejects any artifact that imports a third-party DLL / dylib / so. Linux builds are <code>musl</code>-static; macOS depends only on libraries Apple guarantees (<code>libSystem</code>, frameworks, <code>libobjc</code>); Windows depends only on system DLLs in <code>System32</code>. Some tools need read-only data files — <code>vim</code>'s runtime scripts, for example — which ship in a separate <code>.tar.zst</code> next to the binary and are extracted by <code>unpin install</code>. The binary itself loads no third-party code at runtime.
+            <strong>Single binary, no third-party shared libraries.</strong> CI rejects any artifact that imports a third-party DLL / dylib / so. Linux builds are <code>musl</code>-static; macOS depends only on libraries Apple guarantees (<code>libSystem</code>, frameworks, <code>libobjc</code>); Windows depends only on system DLLs in <code>System32</code>. Some programs need read-only data files — <code>vim</code>'s runtime scripts, for example — which ship in a separate <code>.tar.zst</code> next to the binary and are extracted by <code>unpin install</code>. The binary itself loads no third-party code at runtime.
           </li>
           <li>
-            <strong>Cross-OS parity from one recipe.</strong> The same Nix flake produces a Linux, macOS, and Windows build of the tool (when feasible — see "Scope and limits" below). When upstream fixes a bug, all three platforms get the fix from a single source change.
+            <strong>Cross-OS parity from one recipe.</strong> The same Nix flake produces a Linux, macOS, and Windows build of the program (when feasible — see "Scope and limits" below). When upstream fixes a bug, all three platforms get the fix from a single source change.
           </li>
           <li>
             <strong>Runs on old systems.</strong> Linux binaries use <code>musl</code> and don't pin a glibc version, so they work on a 5-year-old Debian, a minimal Alpine container, or anything with a reasonable kernel API. No "this binary needs glibc 2.36" surprises.
@@ -86,10 +86,10 @@
         <h2>Scope and limits</h2>
         <ul>
           <li>
-            <strong>We don't replace your OS package manager.</strong> apt, dnf, brew still own the system pieces — libc, the kernel, X11, fonts. unpins focuses on user-space CLI tools.
+            <strong>We don't replace your OS package manager.</strong> apt, dnf, brew still own the system pieces — libc, the kernel, X11, fonts. unpins focuses on user-space programs.
           </li>
           <li>
-            <strong>Not every tool reduces to one binary.</strong> Some tools — <code>bash</code> on Windows, for instance — have upstream architectures that assume POSIX semantics or fork-exec patterns that don't fit a single <code>.exe</code>; those don't make the catalog. The <a href="packages.html">packages page</a> shows which platforms each tool supports.
+            <strong>Not every program reduces to one binary.</strong> Some programs — <code>bash</code> on Windows, for instance — have upstream architectures that assume POSIX semantics or fork-exec patterns that don't fit a single <code>.exe</code>; those don't make the catalog. The <a href="packages.html">packages page</a> shows which platforms each program supports.
           </li>
           <li>
             <strong>Non-catalog installs are SHA256-pinned downloads, not audited builds.</strong> When you <code>unpin install &lt;owner&gt;/&lt;repo&gt;</code>, we don't rebuild or audit that binary — we trust the publisher. The reproducibility and single-binary guarantees apply only to the unpins catalog.
@@ -112,7 +112,7 @@
 
       <footer>
         <p>
-          The <code>unpin</code> CLI is MIT-licensed. Packaged tools keep their upstream licenses — see <a href="packages.html">the packages page</a>.
+          The <code>unpin</code> CLI is MIT-licensed. Packaged programs keep their upstream licenses — see <a href="packages.html">the packages page</a>.
         </p>
       </footer>
     </div>
