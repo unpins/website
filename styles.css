@@ -95,6 +95,16 @@ footer {
   color: var(--tagline);
 }
 
+/* Hero lead: the canonical project sentence, sits between the slogan and the
+   top nav on the home page. See github:unpins/docs/messaging.md. */
+.lead {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 1.25rem auto 0;
+  color: var(--header-text);
+}
+
 /* Top navigation: shown on every page below the logo. Replaces the
    per-subpage "← Back to home" pattern and surfaces Docs prominently. */
 .topnav {

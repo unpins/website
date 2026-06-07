@@ -1,8 +1,8 @@
 # website
 
 Source for [unpins.org](https://unpins.org) — the landing page for
-[unpins](https://github.com/unpins): portable, statically-linked builds of
-common programs that run unchanged on Linux, macOS, and Windows,
+[unpins](https://github.com/unpins): common programs as single
+self-contained binaries, built natively for Linux, macOS, and Windows,
 plus the `unpin` CLI to install them.
 
 ## Layout

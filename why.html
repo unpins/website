@@ -89,7 +89,7 @@
             <strong>We don't replace your OS package manager.</strong> apt, dnf, brew still own the system pieces — libc, the kernel, X11, fonts. unpins focuses on user-space programs.
           </li>
           <li>
-            <strong>Not every program reduces to one binary.</strong> Some programs — <code>bash</code> on Windows, for instance — have upstream architectures that assume POSIX semantics or fork-exec patterns that don't fit a single <code>.exe</code>; those don't make the catalog. The <a href="packages.html">packages page</a> shows which platforms each program supports.
+            <strong>Not every program ships on every OS.</strong> Some are Linux-specific (<code>util-linux</code>, <code>shadow</code>, <code>kmod</code>); others rely on platform APIs that aren't available or portable on Windows (<code>htop</code>, <code>tmux</code>). The <a href="packages.html">packages page</a> shows which platforms each program supports.
           </li>
           <li>
             <strong>Non-catalog installs are SHA256-pinned downloads, not audited builds.</strong> When you <code>unpin install &lt;owner&gt;/&lt;repo&gt;</code>, we don't rebuild or audit that binary — we trust the publisher. The reproducibility and single-binary guarantees apply only to the unpins catalog.
