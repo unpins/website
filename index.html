@@ -25,7 +25,7 @@
         <div class="feature-card">
           <h3>Single binary, no shared libraries</h3>
           <p>
-            Every catalog program ships as one executable — no third-party <code>.dll</code> / <code>.dylib</code> / <code>.so</code> alongside. A few (like <code>vim</code>) also ship a small read-only data archive — no code outside the binary.
+            Every catalog program ships as one executable — no third-party <code>.dll</code> / <code>.dylib</code> / <code>.so</code> alongside, and no companion data files: even read-only runtime data (like <code>vim</code>'s) is embedded in the binary.
           </p>
         </div>
         <div class="feature-card">
@@ -38,6 +38,18 @@
           <h3>Reproducible from source</h3>
           <p>
             Rebuild any catalog binary byte-identical with <code>nix build github:unpins/&lt;pkg&gt;</code>. The flake is public — verify what you run.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>No root, no system changes</h3>
+          <p>
+            <code>unpin</code> installs into a user directory — <code>~/.local/bin</code>, or <code>%LOCALAPPDATA%</code> on Windows — and only edits your PATH after asking. No sudo, nothing system-wide; it works even where you're not admin.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Runs on old systems</h3>
+          <p>
+            Linux builds are <code>musl</code>-based and don't pin a glibc version, so they run on a 5-year-old distro or a minimal container — no "needs glibc 2.x" surprises.
           </p>
         </div>
         <div class="feature-card">
