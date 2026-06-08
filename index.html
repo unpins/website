@@ -12,50 +12,38 @@
       <header>
         <h1><img src="unpins-logo.svg" alt="unpins" class="logo"></h1>
         <p class="tagline">Unpin your programs from your OS</p>
-        <p class="lead">Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows. unpins curates and builds them; the <code>unpin</code> CLI installs them, or anything from a GitHub release.</p>
         <nav class="topnav">
           <a href="packages.html">Packages</a>
           <a href="why.html">Why?</a>
           <a href="https://github.com/unpins/docs">Docs</a>
           <a href="https://github.com/unpins">GitHub</a>
         </nav>
+        <p class="lead">Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows.</p>
       </header>
 
       <section class="features">
         <div class="feature-card">
-          <h3>Single binary, no shared libraries</h3>
+          <h3>Single self-contained binary</h3>
           <p>
-            Every catalog program ships as one executable — no third-party <code>.dll</code> / <code>.dylib</code> / <code>.so</code> alongside, and no companion data files: even read-only runtime data (like <code>vim</code>'s) is embedded in the binary.
+            One executable per program — no third-party <code>.dll</code> / <code>.dylib</code> / <code>.so</code>, no companion data files (even <code>vim</code>'s runtime is embedded). Linux builds are <code>musl</code>-static: no glibc-version surprises.
           </p>
         </div>
         <div class="feature-card">
-          <h3>Cross-OS from one recipe</h3>
+          <h3>Install without root</h3>
           <p>
-            One Nix flake produces a Linux musl-static, a macOS native, and a Windows build of the same program. Same source, three artifacts.
+            The <code>unpin</code> CLI picks the right asset for your OS, verifies its SHA256, and drops it in a user directory — <code>~/.local/bin</code>, or <code>%LOCALAPPDATA%</code> on Windows. No sudo, nothing system-wide, and your PATH is only edited after you say yes. Works with the catalog or any GitHub release.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Built natively for every OS</h3>
+          <p>
+            One Nix flake produces a native Linux, macOS, and Windows build of the same program — same source, three real binaries, no compatibility layer.
           </p>
         </div>
         <div class="feature-card">
           <h3>Reproducible from source</h3>
           <p>
-            Rebuild any catalog binary byte-identical with <code>nix build github:unpins/&lt;pkg&gt;</code>. The flake is public — verify what you run.
-          </p>
-        </div>
-        <div class="feature-card">
-          <h3>No root, no system changes</h3>
-          <p>
-            <code>unpin</code> installs into a user directory — <code>~/.local/bin</code>, or <code>%LOCALAPPDATA%</code> on Windows — and only edits your PATH after asking. No sudo, nothing system-wide; it works even where you're not admin.
-          </p>
-        </div>
-        <div class="feature-card">
-          <h3>Runs on old systems</h3>
-          <p>
-            Linux builds are <code>musl</code>-based and don't pin a glibc version, so they run on a 5-year-old distro or a minimal container — no "needs glibc 2.x" surprises.
-          </p>
-        </div>
-        <div class="feature-card">
-          <h3>Plus a CLI to install them</h3>
-          <p>
-            The <code>unpin</code> command picks the right asset for your OS, verifies the SHA256, and drops it in PATH. Catalog or any GitHub release.
+            Every catalog flake is public and pins its inputs — read exactly what we patch and link, then rebuild it yourself with <code>nix build github:unpins/&lt;pkg&gt;</code>. You don't have to trust our CI.
           </p>
         </div>
       </section>

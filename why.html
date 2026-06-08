@@ -35,7 +35,7 @@
             <strong>Runs on old systems.</strong> Linux binaries use <code>musl</code> and don't pin a glibc version, so they work on a 5-year-old Debian, a minimal Alpine container, or anything with a reasonable kernel API. No "this binary needs glibc 2.36" surprises.
           </li>
           <li>
-            <strong>Reproducible from source.</strong> Every catalog flake is public. Run <code>nix build github:unpins/htop</code> on your machine and you get a byte-identical binary. Don't trust our CI? Rebuild it.
+            <strong>Reproducible from source.</strong> Every catalog flake is public and pins its inputs — read exactly what we patch, link, and verify, then rebuild it yourself with <code>nix build github:unpins/htop</code>. You don't have to trust our CI.
           </li>
         </ul>
       </section>
@@ -103,7 +103,7 @@
         <div class="install-box-wrapper">
           <div class="install-box"><code><span class="cmd">nix</span> build github:unpins/htop
 <span class="cmd">file</span> result/bin/htop      <span class="comment"># statically linked (Linux)</span>
-<span class="cmd">sha256sum</span> result/bin/htop  <span class="comment"># compare to the published release</span></code></div>
+<span class="cmd">sha256sum</span> result/bin/htop  <span class="comment"># checksum the binary you built</span></code></div>
         </div>
         <p>
           Read a flake to see exactly what we patch, what we link, and how the artifact is verified — start with <a href="https://github.com/unpins/htop/blob/main/flake.nix"><code>github:unpins/htop/flake.nix</code></a>. Shared build helpers are in <a href="https://github.com/unpins/nix-lib"><code>nix-lib</code></a>, CI workflows in <a href="https://github.com/unpins/action-build"><code>action-build</code></a>, and the project's technical documentation — architecture, the single-binary policy, per-platform notes, patch recipes, templates — in <a href="https://github.com/unpins/docs"><code>docs</code></a>.

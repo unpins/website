@@ -95,8 +95,8 @@ footer {
   color: var(--tagline);
 }
 
-/* Hero lead: the canonical project sentence, sits between the slogan and the
-   top nav on the home page. See github:unpins/docs/messaging.md. */
+/* Hero lead: the project promise (first half of the canonical sentence), sits
+   just below the top nav on the home page. See github:unpins/docs/messaging.md. */
 .lead {
   font-size: 1.05rem;
   line-height: 1.6;
