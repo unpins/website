@@ -1,108 +1,102 @@
 #!/usr/bin/env python3
 """Generate packages.html from the unpins workspace.
 
-Scans sibling directories that contain a flake.nix and writes the full
-packages.html (styled via styles.css). Windows support is inferred from the
-flake setting `windows = true` (mingw path) or `windowsCosmo = true` (cosmo
-path), defining `windowsBuild = ...`, or exposing a `"windows-x86_64"`
-package output directly.
+Scans sibling directories that contain a flake.nix and, for each, runs a single
+`nix eval` that pulls everything the page needs straight from the flake — no
+per-package table in this script.
+
+Data sources (all from `nix eval <pkg>#packages`):
+  - version      packages.x86_64-linux.default.version
+  - license      packages.x86_64-linux.default.meta.license, normalized to SPDX
+  - description  packages.x86_64-linux.default.meta.description
+  - Linux        always (every catalog flake builds it)
+  - macOS        packages.x86_64-darwin has a `default`
+  - Windows      packages.x86_64-linux has a `windows-x86_64`
+
+license/description reach the artifact via nix-lib's `strippedOrJoined`, which
+carries the upstream meta onto the final derivation. Package flakes still pinning
+an older nix-lib don't expose it yet, so we evaluate with
+`--override-input unpins-lib <local nix-lib>` to read the current behavior
+without bumping every package's flake.lock; it's a no-op once a lock catches up.
+Flakes that declare no input named `unpins-lib` (e.g. the unpin CLI itself) are
+retried without the override.
+
+A package whose flake sets no `meta.license` (a custom mkDerivation — ffmpeg, the
+codec libs) comes back as "—"; a package that inherits nixpkgs' multi-component
+license list (util-linux) comes back as "A / B / C". Both are resolved by
+declaring an explicit `meta.license` in that flake — authoritative and reusable
+(`unpin info`, SBOMs) — not by a lookup table here. `main()` prints both lists at
+the end of a run so they're easy to find.
 """
+import json
 import os
-import re
 import subprocess
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 WORKSPACE = os.path.dirname(SCRIPT_DIR)
 OUT_PATH = os.path.join(SCRIPT_DIR, "packages.html")
+NIX_LIB = os.path.join(WORKSPACE, "nix-lib")
 
-# Directories that have a flake.nix but aren't end-user packages.
+# Directories that have a flake.nix but aren't catalog packages.
 #   nix-lib   — shared build glue, not a tool.
 #   cosmocc   — Cosmopolitan toolchain derivation (build dep, not a CLI).
 #   unpin-zig — alternate implementation of the unpin CLI itself.
-EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig"}
+#   unpin     — the installer itself, not a catalog program (its MIT license is
+#               stated in the page footer).
+EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig", "unpin"}
 
-# SPDX license per package. Sourced from nixpkgs meta.license at the pinned
-# channel, adjusted where build flags change the effective license
-# (e.g. ffmpeg with --enable-gpl --enable-version3 → GPL-3.0-or-later).
-LICENSE = {
-    "bash":      "GPL-3.0-or-later",
-    "coreutils": "GPL-3.0-or-later",
-    "curl":      "curl",
-    "ffmpeg":    "GPL-3.0-or-later",
-    "file":      "BSD-2-Clause",
-    "git":       "GPL-2.0-only",
-    "gvim":      "Vim",
-    "htop":      "GPL-2.0-only",
-    "jq":        "MIT",
-    "less":      "GPL-3.0-or-later",
-    "make":      "GPL-3.0-or-later",
-    "nano":      "GPL-3.0-or-later",
-    "tar":       "BSD-2-Clause",
-    "tmux":      "BSD-3-Clause",
-    "tree":      "GPL-2.0-or-later",
-    "unpin":     "MIT",
-    "vim":       "Vim",
-    "xz":        "0BSD",
-    "zstd":      "BSD-3-Clause",
+# One eval per package returns everything the page needs. Pure Nix (no `lib`)
+# so it doesn't depend on a particular nixpkgs being in scope.
+EVAL_APPLY = r"""
+ps:
+let
+  linux = ps.x86_64-linux.default or null;
+  licRaw = if linux == null then null else (linux.meta.license or null);
+  spdx = x:
+    if builtins.isAttrs x then (x.spdxId or x.shortName or x.fullName or "?")
+    else (if builtins.isString x then x else "?");
+  lic = if licRaw == null then null
+        else map spdx (if builtins.isList licRaw then licRaw else [ licRaw ]);
+in {
+  version = if linux == null then null else (linux.version or null);
+  license = lic;
+  description = if linux == null then null else (linux.meta.description or null);
+  macos = (ps ? x86_64-darwin) && (ps.x86_64-darwin ? default);
+  windows = (ps ? x86_64-linux) && (ps.x86_64-linux ? "windows-x86_64");
 }
-
-# Markers that indicate a flake builds a Windows artifact:
-#   `windows = true;`        — mkStandaloneFlake flag → fixes-registry mingw build
-#   `windowsCosmo = true;`   — mkStandaloneFlake flag → cosmo cross build (coreutils)
-#   `windowsBuild = ...`     — consumer-supplied build (curl, tree, vim, gvim)
-#   `"windows-x86_64"`       — explicit packages.<system> output (unpin)
-WIN_RE = re.compile(
-    r'\bwindows(Cosmo)?\s*=\s*true\b|\bwindowsBuild\s*=|"windows-x86_64"'
-)
+"""
 
 
-def windows_supported(flake_path):
-    with open(flake_path) as f:
-        return bool(WIN_RE.search(f.read()))
-
-
-def parse_version_from_symlink(link_path):
-    """Parse the version out of a Nix `result` symlink.
-
-    Nix store paths follow the HASH-PNAME-VERSION convention; the version is
-    the trailing `-`-delimited segment that starts with a digit.
-    """
+def _run(cmd):
     try:
-        target = os.readlink(link_path)
-    except OSError:
-        return None
-    base = os.path.basename(target)
-    if "-" in base:
-        base = base.split("-", 1)[1]  # drop hash prefix
-    for part in reversed(base.split("-")):
-        if part and part[0].isdigit():
-            return part
-    return None
-
-
-def get_version(pkg_dir):
-    """Authoritative: ask nix (uses flake.lock pins, no build required).
-    Fallback: parse a result symlink if one happens to be around.
-    """
-    try:
-        # 300s: gvim's static-GTK2 override cascade can take >120s to evaluate
-        # cold (six pkgsStatic overrides + two patches drag the eval down).
-        r = subprocess.run(
-            ["nix", "eval", "--raw",
-             f"{pkg_dir}#packages.x86_64-linux.default.version"],
-            capture_output=True, text=True, timeout=300,
-        )
-        if r.returncode == 0 and r.stdout.strip():
-            return r.stdout.strip()
+        # 400s: gvim's static-GTK2 override cascade can take minutes to
+        # evaluate cold (several pkgsStatic overrides + patches).
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=400)
     except (FileNotFoundError, subprocess.TimeoutExpired):
-        pass
-    for cand in ("result", "result-win"):
-        link = os.path.join(pkg_dir, cand)
-        if os.path.islink(link):
-            v = parse_version_from_symlink(link)
-            if v:
-                return v
-    return None
+        return None
+    if r.returncode != 0 or not r.stdout.strip():
+        return None
+    try:
+        return json.loads(r.stdout)
+    except json.JSONDecodeError:
+        return None
+
+
+def eval_package(pkg_dir):
+    """version/license/description/platforms in one eval.
+
+    Prefer the local-nix-lib override (so meta propagation is visible even
+    before a package's lock bumps); fall back to a plain eval for flakes with
+    no `unpins-lib` input. Returns a dict, or None if both evals fail.
+    """
+    target = f"{pkg_dir}#packages"
+    with_override = [
+        "nix", "eval", "--json", target,
+        "--override-input", "unpins-lib", f"path:{NIX_LIB}",
+        "--apply", EVAL_APPLY,
+    ]
+    plain = ["nix", "eval", "--json", target, "--apply", EVAL_APPLY]
+    return _run(with_override) or _run(plain)
 
 
 def discover_packages():
@@ -112,26 +106,34 @@ def discover_packages():
         flake = os.path.join(pkg_dir, "flake.nix")
         if not os.path.isfile(flake) or name in EXCLUDE:
             continue
+        data = eval_package(pkg_dir) or {}
+        lic = data.get("license")
         rows.append({
-            "name":    name,
-            "version": get_version(pkg_dir) or "—",
-            "license": LICENSE.get(name, "—"),
-            "windows": windows_supported(flake),
+            "name":        name,
+            "version":     data.get("version") or "—",
+            "license":     " / ".join(lic) if lic else "—",
+            "multi":       bool(lic) and len(lic) > 1,
+            "description": data.get("description") or "",
+            "macos":       bool(data.get("macos")),
+            "windows":     bool(data.get("windows")),
         })
     return rows
 
 
+def os_cell(supported):
+    return ('<td class="os yes">✓</td>' if supported
+            else '<td class="os">—</td>')
+
+
 def render_row(pkg):
-    win = ('<td class="os yes">✓</td>' if pkg["windows"]
-           else '<td class="os">—</td>')
     return (
         '            <tr>'
         f'<td><a href="https://github.com/unpins/{pkg["name"]}">{pkg["name"]}</a></td>'
         f'<td class="version">{pkg["version"]}</td>'
         f'<td class="license">{pkg["license"]}</td>'
-        '<td class="os yes">✓</td>'
-        '<td class="os yes">✓</td>'
-        f'{win}'
+        '<td class="os yes">✓</td>'  # Linux: every catalog flake builds it
+        f'{os_cell(pkg["macos"])}'
+        f'{os_cell(pkg["windows"])}'
         '</tr>'
     )
 
@@ -174,13 +176,13 @@ PAGE = """<!DOCTYPE html>
           </tbody>
         </table>
         <p class="pkg-note">
-          A few tools have no Windows row by design: the upstream architecture (e.g. <code>bash</code>'s fork-singleton, <code>git</code>'s POSIX assumptions) doesn't reduce cleanly to a single standalone <code>.exe</code>.
+          A few programs have no Windows row: some are Linux-specific (<code>util-linux</code>, <code>shadow</code>, <code>kmod</code>), others rely on platform APIs that aren't available or portable on Windows (<code>htop</code>, <code>tmux</code>). Support is tracked per program in the table above.
         </p>
       </section>
 
       <footer>
         <p>
-          The <code>unpin</code> CLI is MIT-licensed. Each tool above keeps its upstream license.
+          The <code>unpin</code> CLI is MIT-licensed. Each program above keeps its upstream license.
         </p>
       </footer>
     </div>
@@ -195,6 +197,15 @@ def main():
     with open(OUT_PATH, "w") as f:
         f.write(PAGE.format(rows=rows))
     print(f"Wrote {OUT_PATH} ({len(pkgs)} packages)")
+
+    missing = [p["name"] for p in pkgs if p["license"] == "—"]
+    multi = [p["name"] for p in pkgs if p["multi"]]
+    if missing:
+        print(f"\n{len(missing)} package(s) with no meta.license "
+              f"(declare it in the flake):\n  {', '.join(missing)}")
+    if multi:
+        print(f"\n{len(multi)} package(s) with a multi-license list "
+              f"(consider a curated meta.license in the flake):\n  {', '.join(multi)}")
 
 
 if __name__ == "__main__":
