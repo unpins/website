@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>unpins — binaries for Linux, macOS &amp; Windows</title>
+    <meta name="description" content="Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows. The unpin CLI installs them without root — or anything from a GitHub release.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unpins.org/">
+    <meta property="og:title" content="unpins — binaries for Linux, macOS &amp; Windows">
+    <meta property="og:description" content="Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows. The unpin CLI installs them without root — or anything from a GitHub release.">
+    <meta property="og:image" content="https://unpins.org/favicon.png">
+    <meta name="twitter:card" content="summary">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -15,11 +22,19 @@
         <nav class="topnav">
           <a href="packages.html">Packages</a>
           <a href="why.html">Why?</a>
-          <a href="https://github.com/unpins/docs">Docs</a>
+          <a href="https://github.com/unpins/unpin#usage">Docs</a>
           <a href="https://github.com/unpins">GitHub</a>
         </nav>
         <p class="lead">Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows.</p>
       </header>
+
+      <section class="demo">
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="https://github.com/unpins/unpin/releases/download/v0.3.0/unpin-demo-dark.gif">
+          <source media="(prefers-color-scheme: light)" srcset="https://github.com/unpins/unpin/releases/download/v0.3.0/unpin-demo-light.gif">
+          <img alt="unpin demo — run a program straight from a GitHub release, then install several from the curated catalog in parallel" src="https://github.com/unpins/unpin/releases/download/v0.3.0/unpin-demo-dark.gif">
+        </picture>
+      </section>
 
       <section class="features">
         <div class="feature-card">
@@ -45,54 +60,6 @@
           <p>
             Every catalog flake is public and pins its inputs — read exactly what we patch and link, then rebuild it yourself with <code>nix build github:unpins/&lt;pkg&gt;</code>. You don't have to trust our CI.
           </p>
-        </div>
-      </section>
-
-      <section class="usage-examples">
-        <h2 style="text-align: center; margin-bottom: 2rem;">Usage Examples</h2>
-
-        <p>Install standard programs like <strong>htop</strong>:</p>
-        <div class="install-box-wrapper" style="margin-top: 1rem;">
-          <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
-            <svg class="copy-icon" viewBox="0 0 24 24">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <svg class="check-icon" viewBox="0 0 24 24" style="display: none; stroke: #2da44e;">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </button>
-          <div class="install-box"><code><span class="cmd">unpin</span> install htop
-<span class="cmd">htop</span> <span class="comment"># Ready to run!</span></code></div>
-        </div>
-
-        <p>Or install specific programs directly from their GitHub repositories, such as <strong>jgm/pandoc</strong>:</p>
-        <div class="install-box-wrapper" style="margin-top: 1rem;">
-          <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
-            <svg class="copy-icon" viewBox="0 0 24 24">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <svg class="check-icon" viewBox="0 0 24 24" style="display: none; stroke: #2da44e;">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </button>
-          <div class="install-box"><code><span class="cmd">unpin</span> install jgm/pandoc
-<span class="cmd">pandoc</span> --version</code></div>
-        </div>
-
-        <p>Just need something once? Use <code>run</code> to fetch and execute it without installing into PATH:</p>
-        <div class="install-box-wrapper" style="margin-top: 1rem;">
-          <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
-            <svg class="copy-icon" viewBox="0 0 24 24">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <svg class="check-icon" viewBox="0 0 24 24" style="display: none; stroke: #2da44e;">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </button>
-          <div class="install-box"><code><span class="cmd">unpin</span> run tree</code></div>
         </div>
       </section>
 
@@ -168,6 +135,54 @@
               <code>unpin install</code> moves it into <code>%LOCALAPPDATA%\unpin</code> and offers to add it to your PATH. Open a new terminal afterwards.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section class="usage-examples" style="margin-top: 5rem;">
+        <h2 style="text-align: center; margin-bottom: 2rem;">Usage Examples</h2>
+
+        <p>Install standard programs like <strong>htop</strong>:</p>
+        <div class="install-box-wrapper" style="margin-top: 1rem;">
+          <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
+            <svg class="copy-icon" viewBox="0 0 24 24">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <svg class="check-icon" viewBox="0 0 24 24" style="display: none; stroke: #2da44e;">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
+          <div class="install-box"><code><span class="cmd">unpin</span> install htop
+<span class="cmd">htop</span> <span class="comment"># Ready to run!</span></code></div>
+        </div>
+
+        <p>Or install specific programs directly from their GitHub repositories, such as <strong>jgm/pandoc</strong>:</p>
+        <div class="install-box-wrapper" style="margin-top: 1rem;">
+          <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
+            <svg class="copy-icon" viewBox="0 0 24 24">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <svg class="check-icon" viewBox="0 0 24 24" style="display: none; stroke: #2da44e;">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
+          <div class="install-box"><code><span class="cmd">unpin</span> install jgm/pandoc
+<span class="cmd">pandoc</span> --version</code></div>
+        </div>
+
+        <p>Just need something once? Use <code>run</code> to fetch and execute it without installing into PATH:</p>
+        <div class="install-box-wrapper" style="margin-top: 1rem;">
+          <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
+            <svg class="copy-icon" viewBox="0 0 24 24">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <svg class="check-icon" viewBox="0 0 24 24" style="display: none; stroke: #2da44e;">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
+          <div class="install-box"><code><span class="cmd">unpin</span> run tree</code></div>
         </div>
       </section>
 

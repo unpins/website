@@ -105,6 +105,17 @@ footer {
   color: var(--header-text);
 }
 
+/* Demo GIF: theme-aware <picture> on the home page, just below the hero. */
+.demo {
+  margin-top: 2.5rem;
+}
+.demo img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
 /* Top navigation: shown on every page below the logo. Replaces the
    per-subpage "← Back to home" pattern and surfaces Docs prominently. */
 .topnav {
@@ -319,6 +330,30 @@ code {
   margin-bottom: 2rem;
   font-size: 0.95rem;
 }
+.pkg-count {
+  color: var(--tagline);
+  margin-bottom: 1rem;
+}
+.pkg-filter {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.pkg-filter:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+/* The description column makes the table wider than narrow viewports;
+   scroll the table instead of breaking the page layout. */
+.table-scroll {
+  overflow-x: auto;
+}
 .pkg-table {
   width: 100%;
   border-collapse: collapse;
@@ -349,6 +384,11 @@ code {
 .pkg-table td.license {
   color: var(--tagline);
   font-size: 0.9em;
+}
+.pkg-table td.desc {
+  color: var(--tagline);
+  font-size: 0.9em;
+  min-width: 16rem;
 }
 .pkg-table td.yes {
   color: #2da44e;

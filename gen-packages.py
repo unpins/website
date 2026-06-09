@@ -28,6 +28,7 @@ declaring an explicit `meta.license` in that flake — authoritative and reusabl
 (`unpin info`, SBOMs) — not by a lookup table here. `main()` prints both lists at
 the end of a run so they're easy to find.
 """
+import html
 import json
 import os
 import subprocess
@@ -38,12 +39,18 @@ OUT_PATH = os.path.join(SCRIPT_DIR, "packages.html")
 NIX_LIB = os.path.join(WORKSPACE, "nix-lib")
 
 # Directories that have a flake.nix but aren't catalog packages.
-#   nix-lib   — shared build glue, not a tool.
-#   cosmocc   — Cosmopolitan toolchain derivation (build dep, not a CLI).
-#   unpin-zig — alternate implementation of the unpin CLI itself.
-#   unpin     — the installer itself, not a catalog program (its MIT license is
-#               stated in the page footer).
-EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig", "unpin"}
+#   nix-lib      — shared build glue, not a tool.
+#   cosmocc      — Cosmopolitan toolchain derivation (build dep, not a CLI).
+#   unpin-zig    — alternate implementation of the unpin CLI itself.
+#   unpin        — the installer itself, not a catalog program (its MIT license
+#                  is stated in the page footer).
+#   unpin-man    — helper-verb package (`unpin man`), never on PATH
+#                  (docs/helper-verbs.md); not user-installable.
+#   unpin-readme — helper-verb package, same as unpin-man.
+#   tcc          — no GitHub release published yet; listing it would break
+#                  `unpin install tcc`. Remove from here once it releases.
+EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig", "unpin",
+           "unpin-man", "unpin-readme", "tcc"}
 
 # One eval per package returns everything the page needs. Pure Nix (no `lib`)
 # so it doesn't depend on a particular nixpkgs being in scope.
@@ -129,6 +136,7 @@ def render_row(pkg):
     return (
         '            <tr>'
         f'<td><a href="https://github.com/unpins/{pkg["name"]}">{pkg["name"]}</a></td>'
+        f'<td class="desc">{html.escape(pkg["description"])}</td>'
         f'<td class="version">{pkg["version"]}</td>'
         f'<td class="license">{pkg["license"]}</td>'
         '<td class="os yes">✓</td>'  # Linux: every catalog flake builds it
@@ -144,6 +152,13 @@ PAGE = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>unpins — available packages</title>
+    <meta name="description" content="The unpins catalog: {count} programs built as single self-contained binaries for Linux, macOS, and Windows — htop, ffmpeg, python, vim, jq, and more.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unpins.org/packages.html">
+    <meta property="og:title" content="unpins — available packages">
+    <meta property="og:description" content="The unpins catalog: {count} programs built as single self-contained binaries for Linux, macOS, and Windows — htop, ffmpeg, python, vim, jq, and more.">
+    <meta property="og:image" content="https://unpins.org/favicon.png">
+    <meta name="twitter:card" content="summary">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -154,16 +169,20 @@ PAGE = """<!DOCTYPE html>
         <nav class="topnav">
           <a href="packages.html" aria-current="page">Packages</a>
           <a href="why.html">Why?</a>
-          <a href="https://github.com/unpins/docs">Docs</a>
+          <a href="https://github.com/unpins/unpin#usage">Docs</a>
           <a href="https://github.com/unpins">GitHub</a>
         </nav>
       </header>
 
       <section>
+        <p class="pkg-count">{count} packages, each a single self-contained binary. Install any of them with <code>unpin install &lt;name&gt;</code>.</p>
+        <input type="search" id="pkg-filter" class="pkg-filter" placeholder="Filter packages…" aria-label="Filter packages">
+        <div class="table-scroll">
         <table class="pkg-table">
           <thead>
             <tr>
               <th>Package</th>
+              <th>Description</th>
               <th>Version</th>
               <th>License</th>
               <th class="os">Linux</th>
@@ -175,6 +194,7 @@ PAGE = """<!DOCTYPE html>
 {rows}
           </tbody>
         </table>
+        </div>
         <p class="pkg-note">
           A few programs have no Windows row: some are Linux-specific (<code>util-linux</code>, <code>shadow</code>, <code>kmod</code>), others rely on platform APIs that aren't available or portable on Windows (<code>htop</code>, <code>tmux</code>). Support is tracked per program in the table above.
         </p>
@@ -186,6 +206,17 @@ PAGE = """<!DOCTYPE html>
         </p>
       </footer>
     </div>
+
+    <script>
+      const filterInput = document.getElementById('pkg-filter');
+      const pkgRows = Array.from(document.querySelectorAll('.pkg-table tbody tr'));
+      filterInput.addEventListener('input', () => {{
+        const q = filterInput.value.trim().toLowerCase();
+        for (const row of pkgRows) {{
+          row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        }}
+      }});
+    </script>
   </body>
 </html>
 """
@@ -195,8 +226,13 @@ def main():
     pkgs = discover_packages()
     rows = "\n".join(render_row(p) for p in pkgs)
     with open(OUT_PATH, "w") as f:
-        f.write(PAGE.format(rows=rows))
+        f.write(PAGE.format(rows=rows, count=len(pkgs)))
     print(f"Wrote {OUT_PATH} ({len(pkgs)} packages)")
+
+    nodesc = [p["name"] for p in pkgs if not p["description"]]
+    if nodesc:
+        print(f"\n{len(nodesc)} package(s) with no meta.description "
+              f"(declare it in the flake):\n  {', '.join(nodesc)}")
 
     missing = [p["name"] for p in pkgs if p["license"] == "—"]
     multi = [p["name"] for p in pkgs if p["multi"]]
