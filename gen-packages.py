@@ -49,10 +49,8 @@ NIX_LIB = os.path.join(WORKSPACE, "nix-lib")
 #   unpin-man    — helper-verb package (`unpin man`), never on PATH
 #                  (docs/helper-verbs.md); not user-installable.
 #   unpin-readme — helper-verb package, same as unpin-man.
-#   tcc          — no GitHub release published yet; listing it would break
-#                  `unpin install tcc`. Remove from here once it releases.
 EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig", "unpin",
-           "unpin-man", "unpin-readme", "tcc"}
+           "unpin-man", "unpin-readme"}
 
 # One eval per package returns everything the page needs. Pure Nix (no `lib`)
 # so it doesn't depend on a particular nixpkgs being in scope.
