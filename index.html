@@ -141,7 +141,21 @@
       <section class="usage-examples" style="margin-top: 5rem;">
         <h2 style="text-align: center; margin-bottom: 2rem;">Usage Examples</h2>
 
-        <p>Install standard programs like <strong>htop</strong>:</p>
+        <p>Run a program once — nothing is installed (the default action):</p>
+        <div class="install-box-wrapper" style="margin-top: 1rem;">
+          <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
+            <svg class="copy-icon" viewBox="0 0 24 24">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <svg class="check-icon" viewBox="0 0 24 24" style="display: none; stroke: #2da44e;">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
+          <div class="install-box"><code><span class="cmd">unpin</span> ffmpeg -version</code></div>
+        </div>
+
+        <p>Install from the catalog — a catalog name like <strong>htop</strong> resolves to <code>unpins/htop</code>:</p>
         <div class="install-box-wrapper" style="margin-top: 1rem;">
           <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
             <svg class="copy-icon" viewBox="0 0 24 24">
@@ -156,7 +170,7 @@
 <span class="cmd">htop</span> <span class="comment"># Ready to run!</span></code></div>
         </div>
 
-        <p>Or install specific programs directly from their GitHub repositories, such as <strong>jgm/pandoc</strong>:</p>
+        <p>Or install from any GitHub release, given a full <code>owner/repo</code>:</p>
         <div class="install-box-wrapper" style="margin-top: 1rem;">
           <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
             <svg class="copy-icon" viewBox="0 0 24 24">
@@ -167,28 +181,16 @@
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
           </button>
-          <div class="install-box"><code><span class="cmd">unpin</span> install jgm/pandoc
-<span class="cmd">pandoc</span> --version</code></div>
-        </div>
-
-        <p>Just need something once? Use <code>run</code> to fetch and execute it without installing into PATH:</p>
-        <div class="install-box-wrapper" style="margin-top: 1rem;">
-          <button class="copy-btn" aria-label="Copy code" onclick="copyCode(this)" title="Copy to clipboard">
-            <svg class="copy-icon" viewBox="0 0 24 24">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <svg class="check-icon" viewBox="0 0 24 24" style="display: none; stroke: #2da44e;">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </button>
-          <div class="install-box"><code><span class="cmd">unpin</span> run tree</code></div>
+          <div class="install-box"><code><span class="cmd">unpin</span> install BurntSushi/ripgrep
+<span class="cmd">rg</span> --version</code></div>
         </div>
       </section>
 
       <section style="margin-top: 5rem; text-align: center;">
         <h2 style="margin-bottom: 1rem;">Available Packages</h2>
-        <p>Single-binary builds of common programs for Linux, macOS, and (where viable) Windows. <a href="packages.html">See the full list →</a></p>
+        <!-- gen:pkg-blurb — rewritten by gen-packages.py; edit the template there -->
+        <p>74 programs in the catalog — <code>ffmpeg</code>, <code>python</code>, <code>vim</code>, <code>jq</code>, <code>htop</code>, and more — each a single self-contained binary for Linux, macOS, and (where viable) Windows; see <a href="packages.html">the full list</a>.</p>
+        <!-- /gen:pkg-blurb -->
       </section>
 
       <section style="margin-top: 5rem;">

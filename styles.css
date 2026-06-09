@@ -330,6 +330,20 @@ code {
   margin-bottom: 2rem;
   font-size: 0.95rem;
 }
+/* Visually hidden, still read by screen readers — used for the yes/no text
+   behind the ✓/— glyphs in the support tables. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .pkg-count {
   color: var(--tagline);
   margin-bottom: 1rem;

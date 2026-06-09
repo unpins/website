@@ -22,6 +22,9 @@ plus the `unpin` CLI to install them.
 ```
 
 `packages.html` is committed so the deploy needs no build step in CI.
+`gen-packages.py` also rewrites the package-count blurb between the
+`gen:pkg-blurb` markers in `index.html`, so the home page never quotes
+a stale count.
 
 ## Build
 

@@ -31,11 +31,13 @@ the end of a run so they're easy to find.
 import html
 import json
 import os
+import re
 import subprocess
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 WORKSPACE = os.path.dirname(SCRIPT_DIR)
 OUT_PATH = os.path.join(SCRIPT_DIR, "packages.html")
+INDEX_PATH = os.path.join(SCRIPT_DIR, "index.html")
 NIX_LIB = os.path.join(WORKSPACE, "nix-lib")
 
 # Directories that have a flake.nix but aren't catalog packages.
@@ -127,9 +129,16 @@ def discover_packages():
     return rows
 
 
+# The ✓/— glyphs are decoration to a screen reader; pair them with visually
+# hidden yes/no text (announced after the column header).
+YES_CELL = ('<td class="os yes"><span aria-hidden="true">✓</span>'
+            '<span class="sr-only">yes</span></td>')
+NO_CELL = ('<td class="os"><span aria-hidden="true">—</span>'
+           '<span class="sr-only">no</span></td>')
+
+
 def os_cell(supported):
-    return ('<td class="os yes">✓</td>' if supported
-            else '<td class="os">—</td>')
+    return YES_CELL if supported else NO_CELL
 
 
 def render_row(pkg):
@@ -139,7 +148,7 @@ def render_row(pkg):
         f'<td class="desc">{html.escape(pkg["description"])}</td>'
         f'<td class="version">{pkg["version"]}</td>'
         f'<td class="license">{pkg["license"]}</td>'
-        '<td class="os yes">✓</td>'  # Linux: every catalog flake builds it
+        f'{os_cell(True)}'  # Linux: every catalog flake builds it
         f'{os_cell(pkg["macos"])}'
         f'{os_cell(pkg["windows"])}'
         '</tr>'
@@ -209,11 +218,16 @@ PAGE = """<!DOCTYPE html>
 
     <script>
       const filterInput = document.getElementById('pkg-filter');
-      const pkgRows = Array.from(document.querySelectorAll('.pkg-table tbody tr'));
+      // Match on name / description / version / license; skip the OS columns
+      // so their hidden yes/no text doesn't match queries like "windows".
+      const pkgRows = Array.from(document.querySelectorAll('.pkg-table tbody tr'), row => ({{
+        row,
+        text: Array.from(row.cells).slice(0, 4).map(c => c.textContent).join(' ').toLowerCase(),
+      }}));
       filterInput.addEventListener('input', () => {{
         const q = filterInput.value.trim().toLowerCase();
-        for (const row of pkgRows) {{
-          row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        for (const {{row, text}} of pkgRows) {{
+          row.style.display = text.includes(q) ? '' : 'none';
         }}
       }});
     </script>
@@ -222,12 +236,38 @@ PAGE = """<!DOCTYPE html>
 """
 
 
+# Home-page "Available Packages" blurb, kept in sync with the table so the
+# count never goes stale. Rewritten between the gen:pkg-blurb markers in
+# index.html on every run.
+FEATURED = ["ffmpeg", "python", "vim", "jq", "htop"]
+BLURB_RE = re.compile(
+    r"(<!-- gen:pkg-blurb[^>]*-->\n).*?(\n\s*<!-- /gen:pkg-blurb -->)", re.S)
+
+
+def update_index_blurb(pkgs):
+    names = {p["name"] for p in pkgs}
+    codes = ", ".join(f"<code>{n}</code>" for n in FEATURED if n in names)
+    blurb = (
+        f"        <p>{len(pkgs)} programs in the catalog — {codes}, and more — "
+        "each a single self-contained binary for Linux, macOS, and (where viable) "
+        'Windows; see <a href="packages.html">the full list</a>.</p>'
+    )
+    with open(INDEX_PATH) as f:
+        page = f.read()
+    new = BLURB_RE.sub(lambda m: m.group(1) + blurb + m.group(2), page, count=1)
+    if new != page:
+        with open(INDEX_PATH, "w") as f:
+            f.write(new)
+        print(f"Updated {INDEX_PATH} blurb ({len(pkgs)} packages)")
+
+
 def main():
     pkgs = discover_packages()
     rows = "\n".join(render_row(p) for p in pkgs)
     with open(OUT_PATH, "w") as f:
         f.write(PAGE.format(rows=rows, count=len(pkgs)))
     print(f"Wrote {OUT_PATH} ({len(pkgs)} packages)")
+    update_index_blurb(pkgs)
 
     nodesc = [p["name"] for p in pkgs if not p["description"]]
     if nodesc:
