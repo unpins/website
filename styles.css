@@ -368,6 +368,17 @@ code {
 .table-scroll {
   overflow-x: auto;
 }
+/* On wide screens, let the table break out of the 800px prose container
+   (centered on it) instead of hiding the trailing columns behind a scroll.
+   The 5rem slack absorbs body padding + the viewport scrollbar that 100vw
+   includes. Kicks in once the container is pinned at its 800px max. */
+@media (min-width: 864px) {
+  .table-scroll {
+    --table-w: min(1080px, calc(100vw - 5rem));
+    width: var(--table-w);
+    margin-left: calc((800px - var(--table-w)) / 2);
+  }
+}
 .pkg-table {
   width: 100%;
   border-collapse: collapse;
@@ -385,7 +396,7 @@ code {
 }
 .pkg-table th.os, .pkg-table td.os {
   text-align: center;
-  width: 5.5rem;
+  width: 4rem;
 }
 .pkg-table td.os {
   color: var(--tagline);
