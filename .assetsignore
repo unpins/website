@@ -4,6 +4,7 @@
 # Build scripts
 Makefile
 gen-packages.py
+og-banner.svg
 
 # Build intermediates
 target/

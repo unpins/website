@@ -14,6 +14,8 @@ plus the `unpin` CLI to install them.
 ├── styles.css          shared styles
 ├── unpins-logo.svg     theme-aware wordmark
 ├── favicon.svg         tab icon: 'u' + arrow
+├── og-banner.svg       source for og.png (fixed dark theme)
+├── og.png              social-preview card image (generated, committed)
 ├── _redirects          /unpin-* → latest GitHub release asset
 ├── wrangler.toml       Cloudflare Workers config
 ├── .assetsignore       files excluded from the static-assets upload

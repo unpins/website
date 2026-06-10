@@ -164,8 +164,10 @@ PAGE = """<!DOCTYPE html>
     <meta property="og:url" content="https://unpins.org/packages.html">
     <meta property="og:title" content="unpins — available packages">
     <meta property="og:description" content="The unpins catalog: {count} programs built as single self-contained binaries for Linux, macOS, and Windows — htop, ffmpeg, python, vim, jq, and more.">
-    <meta property="og:image" content="https://unpins.org/favicon.png">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://unpins.org/og.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="styles.css">
   </head>

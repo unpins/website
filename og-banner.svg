@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Source for og.png (`make og`), the social-preview card image (og:image /
+     twitter:card). Social scrapers ignore prefers-color-scheme, so unlike
+     unpins-logo.svg this composition is fixed dark-theme: the site's dark
+     palette background with the wordmark letters in the dark-theme fill.
+     Keep the wordmark paths in sync with unpins-logo.svg if it changes. -->
+<svg
+   width="1200"
+   height="630"
+   viewBox="0 0 1200 630"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0d1117" />
+
+  <!-- Wordmark (from unpins-logo.svg, letters pinned to the dark-theme fill) -->
+  <svg x="240" y="140" width="720" height="203" viewBox="-252 -896 3932 1106">
+    <defs>
+      <linearGradient
+         id="logo-grad"
+         gradientUnits="userSpaceOnUse"
+         x1="525" y1="0" x2="-128" y2="821">
+        <stop offset="0" stop-color="#0969da" />
+        <stop offset="1" stop-color="#3fb950" />
+      </linearGradient>
+    </defs>
+    <g transform="scale(1, -1)" fill="#c9d1d9">
+      <path
+         fill="url(#logo-grad)"
+         d="M -69.4 807.3 A 44.2 44.2 0 0 1 -113.6 763.1 L -113.6 593.9 A 44.2 44.2 0 0 1 -69.4 549.7 A 44.2 44.2 0 0 1 -25.2 593.9 L -25.2 630.5 L 56.69 548.62 A 62.5 62.5 0 0 0 75 504.42 L 75 208 C 75 140.66667 95 87.5 135 48.5 C 175 9.5 230 -10 300 -10 C 368.66667 -10 423.33333 9.5 464 48.5 C 504.66667 87.5 525 140.66667 525 208 L 525 550 L 400 550 L 400 209 C 400 174.33333 391.16667 147.33333 373.5 128 C 355.83333 108.66667 331.33333 99 300 99 C 268 99 243.33333 108.66667 226 128 C 208.66667 147.33333 200 174.33333 200 209 L 200 504.42 A 187.5 187.5 0 0 1 145.08 637.00 L 63.19 718.9 L 118.1 718.9 A 44.2 44.2 0 0 1 162.3 763.1 A 44.2 44.2 0 0 1 118.1 807.3 L -69.4 807.3 z "
+         transform="translate(0, 0)" />
+      <path
+         d="M77 0V550H199V447Q209 499 248.0 529.5Q287 560 347 560Q428 560 476.5 506.0Q525 452 525 361V0H400V346Q400 397 373.5 424.5Q347 452 302 452Q255 452 228.5 424.0Q202 396 202 344V0Z"
+         transform="translate(600, 0)" />
+      <path
+         d="M77 -180V550H199V449Q214 501 253.0 530.5Q292 560 350 560Q403 560 443.5 534.0Q484 508 506.5 460.5Q529 413 529 350V201Q529 106 480.0 48.0Q431 -10 350 -10Q292 -10 252.5 20.0Q213 50 198 104L202 -26V-180ZM303 98Q351 98 377.5 124.0Q404 150 404 204V346Q404 400 377.5 426.0Q351 452 303 452Q255 452 228.5 423.0Q202 394 202 341V209Q202 156 228.5 127.0Q255 98 303 98Z"
+         transform="translate(1200, 0)" />
+      <path
+         d="M76 0V113H264V437H96V550H389V113H558V0ZM318 642Q280 642 258.0 661.5Q236 681 236 714Q236 747 258.0 766.5Q280 786 318 786Q356 786 378.0 766.5Q400 747 400 714Q400 681 378.0 661.5Q356 642 318 642Z"
+         transform="translate(1800, 0)" />
+      <path
+         d="M77 0V550H199V447Q209 499 248.0 529.5Q287 560 347 560Q428 560 476.5 506.0Q525 452 525 361V0H400V346Q400 397 373.5 424.5Q347 452 302 452Q255 452 228.5 424.0Q202 396 202 344V0Z"
+         transform="translate(2400, 0)" />
+      <path
+         fill="#0969da"
+         d="M277 -9Q179 -9 122.0 35.5Q65 80 65 156H188Q188 124 211.5 107.0Q235 90 277 90H321Q366 90 390.5 107.0Q415 124 415 156Q415 186 398.0 200.5Q381 215 346 220L209 238Q143 247 107.5 289.0Q72 331 72 398Q72 476 124.0 517.5Q176 559 274 559H320Q412 559 468.0 517.0Q524 475 526 405H402Q401 431 379.0 446.5Q357 462 320 462H274Q234 462 213.0 445.5Q192 429 192 401Q192 376 207.5 364.0Q223 352 253 349L382 331Q458 322 496.5 277.5Q535 233 535 158Q535 78 480.5 34.5Q426 -9 321 -9Z"
+         transform="translate(3000, 0)" />
+    </g>
+  </svg>
+
+  <text
+     x="600" y="455"
+     text-anchor="middle"
+     font-family="DejaVu Sans, sans-serif"
+     font-size="44"
+     fill="#c9d1d9">Unpin your programs from your OS</text>
+  <text
+     x="600" y="525"
+     text-anchor="middle"
+     font-family="DejaVu Sans, sans-serif"
+     font-size="28"
+     fill="#8b949e">Linux&#160;&#160;·&#160;&#160;macOS&#160;&#160;·&#160;&#160;Windows</text>
+</svg>
