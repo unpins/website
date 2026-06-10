@@ -54,7 +54,7 @@
         <div class="feature-card">
           <h3>Built natively for every OS</h3>
           <p>
-            One Nix flake produces a native Linux, macOS, and Windows build of the same program — same source, three real binaries, no compatibility layer.
+            One Nix flake produces a native Linux, macOS, and Windows build of the same program — same source, real binaries, no compatibility layer. Linux builds cover six architectures — x86_64, aarch64, armv7l, i686, ppc64le, and riscv64; macOS builds cover Intel and Apple Silicon.
           </p>
         </div>
         <div class="feature-card">
@@ -95,6 +95,7 @@
 <span class="cmd">./unpin</span> install</code></div>
             </div>
             <p class="install-note">
+              Builds are available for x86_64, aarch64, armv7l, i686, ppc64le, and riscv64 — <code>uname -m</code> picks yours.
               <code>unpin install</code> moves the binary into <code>~/.local/bin</code> and offers to add it to your PATH. Open a new shell afterwards.
               To verify the download, compare <code>sha256sum unpin</code> against the same URL with <code>.sha256</code> appended.
             </p>
@@ -116,6 +117,7 @@
 <span class="cmd">./unpin</span> install</code></div>
             </div>
             <p class="install-note">
+              Works on Intel and Apple Silicon — <code>uname -m</code> picks the right build.
               <code>unpin install</code> moves the binary into <code>~/.local/bin</code> and offers to add it to your PATH. Open a new shell afterwards.
               To verify the download, compare <code>shasum -a 256 unpin</code> against the same URL with <code>.sha256</code> appended.
             </p>
