@@ -35,7 +35,7 @@
         </p>
         <ul>
           <li>
-            <strong>Single binary, no third-party shared libraries.</strong> CI rejects any artifact that imports a third-party DLL / dylib / so. Linux builds are <code>musl</code>-static; macOS depends only on libraries Apple guarantees (<code>libSystem</code>, frameworks, <code>libobjc</code>); Windows depends only on system DLLs in <code>System32</code>. Read-only runtime data — <code>vim</code>'s runtime scripts, for example — is embedded in the binary, not shipped alongside it. The binary itself loads no third-party code at runtime.
+            <strong>Single binary, no third-party shared libraries.</strong> CI rejects any artifact that imports a third-party shared library. Linux builds are <code>musl</code>-static; macOS depends only on libraries Apple guarantees (<code>libSystem</code>, frameworks, <code>libobjc</code>); Windows depends only on system DLLs in <code>System32</code>. Read-only runtime data — <code>vim</code>'s runtime scripts, for example — is embedded in the binary, not shipped alongside it. The binary itself loads no third-party code at runtime.
           </li>
           <li>
             <strong>Cross-OS parity from one recipe.</strong> The same Nix flake produces a Linux, macOS, and Windows build of the program (when feasible — see "Scope and limits" below). When upstream fixes a bug, all three platforms get the fix from a single source change.

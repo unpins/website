@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>unpins — binaries for Linux, macOS &amp; Windows</title>
-    <meta name="description" content="Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows. The unpin CLI installs them without root — or anything from a GitHub release.">
+    <meta name="description" content="Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows. The unpin CLI installs them — or anything from a GitHub release — without root.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://unpins.org/">
     <meta property="og:title" content="unpins — binaries for Linux, macOS &amp; Windows">
-    <meta property="og:description" content="Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows. The unpin CLI installs them without root — or anything from a GitHub release.">
+    <meta property="og:description" content="Common programs as single self-contained binaries, built natively for Linux, macOS, and Windows. The unpin CLI installs them — or anything from a GitHub release — without root.">
     <meta property="og:image" content="https://unpins.org/og.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -42,25 +42,25 @@
         <div class="feature-card">
           <h3>Single self-contained binary</h3>
           <p>
-            One executable per program — no third-party <code>.dll</code> / <code>.dylib</code> / <code>.so</code>, no companion data files (even <code>vim</code>'s runtime is embedded). Linux builds are <code>musl</code>-static: no glibc-version surprises.
+            Each program is one executable that carries everything it needs — no shared libraries to chase, no companion data files, even <code>vim</code>'s entire runtime is embedded. Linux builds are statically linked against musl, so they run on old and minimal systems alike.
           </p>
         </div>
         <div class="feature-card">
           <h3>Install without root</h3>
           <p>
-            The <code>unpin</code> CLI picks the right asset for your OS, verifies its SHA256, and drops it in a user directory — <code>~/.local/bin</code>, or <code>%LOCALAPPDATA%</code> on Windows. No sudo, nothing system-wide, and your PATH is only edited after you say yes. Works with the catalog or any GitHub release.
+            The <code>unpin</code> CLI picks the right build for your machine, verifies its checksum, and installs it in a directory of your own — no sudo, nothing system-wide. Your PATH is only edited after you say yes, and it works with the curated catalog or any GitHub release.
           </p>
         </div>
         <div class="feature-card">
           <h3>Built natively for every OS</h3>
           <p>
-            One Nix flake produces a native Linux, macOS, and Windows build of the same program — same source, real binaries, no compatibility layer. Linux builds cover six architectures — x86_64, aarch64, armv7l, i686, ppc64le, and riscv64; macOS builds cover Intel and Apple Silicon.
+            One Nix flake builds the program natively for Linux, macOS, and Windows — real binaries from a single source. Linux builds cover x86_64, aarch64, armv7l, i686, ppc64le, and riscv64; macOS covers both Intel and Apple Silicon.
           </p>
         </div>
         <div class="feature-card">
           <h3>Reproducible from source</h3>
           <p>
-            Every catalog flake is public and pins its inputs — read exactly what we patch and link, then rebuild it yourself with <code>nix build github:unpins/&lt;pkg&gt;</code>. You don't have to trust our CI.
+            Every catalog flake is public and pins its inputs, so you can read exactly what we patch and link. Rebuild any package yourself with <code>nix build github:unpins/&lt;pkg&gt;</code> — you don't have to trust our CI.
           </p>
         </div>
       </section>
@@ -138,6 +138,7 @@
 <span class="cmd">.\unpin.exe</span> install</code></div>
             </div>
             <p class="install-note">
+              Needs Windows 10 1803 or newer for the bundled <code>curl.exe</code>.
               <code>unpin install</code> moves it into <code>%LOCALAPPDATA%\unpin</code> and offers to add it to your PATH. Open a new terminal afterwards.
               To verify the download, compare <code>CertUtil -hashfile unpin.exe SHA256</code> against the same URL with <code>.sha256</code> appended.
             </p>
@@ -203,7 +204,7 @@
       <section style="margin-top: 5rem;">
         <h2 style="text-align: center; margin-bottom: 2rem;">How it works</h2>
         <p>
-          Each program in the catalog lives in its own public repo at <a href="https://github.com/unpins">github.com/unpins</a>, with a Nix flake that defines the build. CI builds it on three OSes, enforces the single-binary policy, and publishes the artifacts to that repo's GitHub release page. The <code>unpin</code> CLI is a thin installer on top of that.
+          Each program in the catalog lives in its own public repo at <a href="https://github.com/unpins">github.com/unpins</a>, with a Nix flake that defines the build. CI builds it for each supported OS, enforces the single-binary policy, and publishes the artifacts to that repo's GitHub release page. The <code>unpin</code> CLI is a thin installer on top of that.
         </p>
         <p>
           For the longer story — what's actually different from Homebrew, Scoop, or your system package manager, how to verify a build yourself, and what we deliberately don't do — see <a href="why.html">Why unpins?</a>
