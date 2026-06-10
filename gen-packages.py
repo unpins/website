@@ -13,6 +13,9 @@ Data sources (all from `nix eval <pkg>#packages`):
   - macOS        packages.x86_64-darwin has a `default`
   - Windows      packages.x86_64-linux has a `windows-x86_64`
 
+Plus, from the GitHub API (`gh api`, not nix):
+  - download     size of the latest release's compressed x86_64-linux asset
+
 license/description reach the artifact via nix-lib's `strippedOrJoined`, which
 carries the upstream meta onto the final derivation. Package flakes still pinning
 an older nix-lib don't expose it yet, so we evaluate with
@@ -106,6 +109,38 @@ def eval_package(pkg_dir):
     return _run(with_override) or _run(plain)
 
 
+def fetch_download_size(name):
+    """Size in bytes of the compressed x86_64-linux release asset (what
+    `unpin` downloads), via the gh CLI. None when gh is missing, the repo
+    has no release, or no asset matches."""
+    cmd = [
+        "gh", "api", f"repos/unpins/{name}/releases/latest",
+        "--jq",
+        '[.assets[] | select(.name | endswith("x86_64-linux.zst")) | .size] | first',
+    ]
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    out = r.stdout.strip()
+    if r.returncode != 0 or not out or out == "null":
+        return None
+    try:
+        return int(out)
+    except ValueError:
+        return None
+
+
+def human_size(n):
+    if n is None:
+        return "—"
+    if n >= 10e6:
+        return f"{n / 1e6:.0f} MB"
+    if n >= 1e6:
+        return f"{n / 1e6:.1f} MB"
+    return f"{n / 1e3:.0f} KB"
+
+
 def discover_packages():
     rows = []
     for name in sorted(os.listdir(WORKSPACE)):
@@ -121,6 +156,7 @@ def discover_packages():
             "license":     " / ".join(lic) if lic else "—",
             "multi":       bool(lic) and len(lic) > 1,
             "description": data.get("description") or "",
+            "size":        fetch_download_size(name),
             "macos":       bool(data.get("macos")),
             "windows":     bool(data.get("windows")),
         })
@@ -146,6 +182,7 @@ def render_row(pkg):
         f'<td class="desc">{html.escape(pkg["description"])}</td>'
         f'<td class="version">{pkg["version"]}</td>'
         f'<td class="license">{pkg["license"]}</td>'
+        f'<td class="size">{human_size(pkg["size"])}</td>'
         f'{os_cell(True)}'  # Linux: every catalog flake builds it
         f'{os_cell(pkg["macos"])}'
         f'{os_cell(pkg["windows"])}'
@@ -194,6 +231,7 @@ PAGE = """<!DOCTYPE html>
               <th>Description</th>
               <th>Version</th>
               <th>License</th>
+              <th class="size">Download</th>
               <th class="os">Linux</th>
               <th class="os">macOS</th>
               <th class="os">Windows</th>
@@ -206,6 +244,7 @@ PAGE = """<!DOCTYPE html>
         </div>
         <p class="pkg-note">
           A few programs have no Windows row: some are Linux-specific (<code>util-linux</code>, <code>shadow</code>, <code>kmod</code>), others rely on platform APIs that aren't available or portable on Windows (<code>htop</code>, <code>tmux</code>). Support is tracked per program in the table above.
+          Download is the compressed (zstd) x86_64 Linux asset — what <code>unpin</code> fetches; the macOS and Windows downloads are in the same ballpark.
         </p>
       </section>
 
@@ -218,8 +257,9 @@ PAGE = """<!DOCTYPE html>
 
     <script>
       const filterInput = document.getElementById('pkg-filter');
-      // Match on name / description / version / license; skip the OS columns
-      // so their hidden yes/no text doesn't match queries like "windows".
+      // Match on name / description / version / license; skip the download
+      // size ("MB" would match everything) and the OS columns, whose hidden
+      // yes/no text would match queries like "windows".
       const pkgRows = Array.from(document.querySelectorAll('.pkg-table tbody tr'), row => ({{
         row,
         text: Array.from(row.cells).slice(0, 4).map(c => c.textContent).join(' ').toLowerCase(),
@@ -273,6 +313,11 @@ def main():
     if nodesc:
         print(f"\n{len(nodesc)} package(s) with no meta.description "
               f"(declare it in the flake):\n  {', '.join(nodesc)}")
+
+    nosize = [p["name"] for p in pkgs if p["size"] is None]
+    if nosize:
+        print(f"\n{len(nosize)} package(s) with no x86_64-linux release asset "
+              f"(no release, or gh failed):\n  {', '.join(nosize)}")
 
     missing = [p["name"] for p in pkgs if p["license"] == "—"]
     multi = [p["name"] for p in pkgs if p["multi"]]

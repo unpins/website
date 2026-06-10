@@ -404,6 +404,15 @@ code {
   font-size: 0.9em;
   min-width: 16rem;
 }
+.pkg-table th.size, .pkg-table td.size {
+  text-align: right;
+  white-space: nowrap;
+}
+.pkg-table td.size {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  color: var(--tagline);
+  font-size: 0.9em;
+}
 .pkg-table td.yes {
   color: #2da44e;
   font-weight: 600;

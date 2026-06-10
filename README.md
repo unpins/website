@@ -36,7 +36,8 @@ make packages  # regenerate the package table (requires `nix`)
 make clean     # remove target/
 ```
 
-Dependencies: `inkscape`; plus `nix` for `make packages`.
+Dependencies: `inkscape`; plus `nix` and `gh` (for the Download column)
+for `make packages`.
 
 ## Preview
 
@@ -46,8 +47,9 @@ DevTools → Inspector → click the moon icon.
 
 ## Deploy
 
-Hosted on Cloudflare Workers Static Assets. The first deploy binds
-`unpins.org` automatically via `wrangler.toml`:
+Hosted on Cloudflare Workers Static Assets. Pushing to `main` deploys
+automatically via the Workers git integration; `wrangler.toml` binds
+`unpins.org`. For a manual deploy:
 
 ```sh
 npx wrangler deploy
