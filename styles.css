@@ -112,6 +112,11 @@ footer {
 .demo img {
   display: block;
   width: 100%;
+  /* The SVG is 687px intrinsic; without a cap it upscales to the section width
+     and the terminal font ends up larger than the page text. Cap below intrinsic
+     so it scales down (glyph ~12px) and center it. */
+  max-width: 620px;
+  margin-inline: auto;
   border: 1px solid var(--border);
   border-radius: 8px;
 }
