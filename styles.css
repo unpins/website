@@ -436,6 +436,15 @@ code {
 .pkg-table tr:last-child td {
   border-bottom: none;
 }
+/* status.html: CI badge column. Reserve the badge's intrinsic height so rows
+   don't reflow as the live SVGs load in. */
+.status-table td.ci {
+  width: 7rem;
+}
+.ci-badge {
+  display: block;
+  height: 20px;
+}
 .pkg-note {
   font-size: 0.85rem;
   color: var(--tagline);

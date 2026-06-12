@@ -52,8 +52,10 @@ NIX_LIB = os.path.join(WORKSPACE, "nix-lib")
 #   unpin-man    — helper-verb package (`unpin man`), never on PATH
 #                  (docs/helper-verbs.md); not user-installable.
 #   unpin-readme — helper-verb package, same as unpin-man.
+#   mandoc-sys   — build glue behind `unpin man` (the mandoc -sys crate), not a
+#                  CLI; carries no description/license/release of its own.
 EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig", "unpin",
-           "unpin-man", "unpin-readme"}
+           "unpin-man", "unpin-readme", "mandoc-sys"}
 
 # One eval per package returns everything the page needs. Pure Nix (no `lib`)
 # so it doesn't depend on a particular nixpkgs being in scope.

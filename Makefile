@@ -16,6 +16,7 @@
 #   logo      — target/unpins-logo.png
 #   og        — og.png (run manually when og-banner.svg changes)
 #   packages  — packages.html (needs nix; run manually when versions change)
+#   status    — status.html CI dashboard (run when a package is added/removed)
 #   clean     — remove target/
 #
 # Dependencies: inkscape; nix (for packages).
@@ -29,7 +30,7 @@ LOGO_PNG_WIDTH := 1600
 OG_SVG := og-banner.svg
 OG_PNG := og.png
 
-.PHONY: all logo og packages clean
+.PHONY: all logo og packages status clean
 .DEFAULT_GOAL := all
 
 all: logo
@@ -50,6 +51,10 @@ $(LOGO_PNG): $(LOGO_SVG)
 packages:
 	@echo "→ Regenerating packages.html..."
 	@python3 gen-packages.py
+
+status:
+	@echo "→ Regenerating status.html..."
+	@python3 gen-status.py
 
 clean:
 	@rm -rf $(TARGET)
