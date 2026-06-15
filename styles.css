@@ -450,3 +450,8 @@ code {
   color: var(--tagline);
   margin-top: 1rem;
 }
+/* The cosmo `✓*` legend sits ABOVE the table, so give it room before the
+   header row (the trailing .pkg-note only needs margin-top). */
+.cosmo-note {
+  margin-bottom: 1rem;
+}

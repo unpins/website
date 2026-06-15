@@ -111,6 +111,30 @@ def eval_package(pkg_dir):
     return _run(with_override) or _run(plain)
 
 
+def windows_backend(pkg_dir, has_windows):
+    """'mingw' | 'cosmo' | None — which toolchain built the Windows .exe.
+
+    Read from the flake's build wiring, NOT the artifact's stdenv: some cosmo
+    packages wrap their build so the final derivation reports the linux build
+    host (isCosmo=false), so the stdenv is an unreliable signal. The convention
+    (docs/platforms/cosmocc.md) is that a cosmo package uses a `cosmo.nix`
+    sidecar, sets `windowsCosmo`, or calls `cosmoStaticCross`. Both backends
+    ship an ordinary PE32+ .exe; this only records which one produced it.
+    """
+    if not has_windows:
+        return None
+    if os.path.exists(os.path.join(pkg_dir, "cosmo.nix")):
+        return "cosmo"
+    try:
+        with open(os.path.join(pkg_dir, "flake.nix")) as f:
+            flake_txt = f.read()
+    except OSError:
+        return "mingw"
+    if "windowsCosmo" in flake_txt or "cosmoStaticCross" in flake_txt:
+        return "cosmo"
+    return "mingw"
+
+
 def fetch_download_size(name):
     """Size in bytes of the compressed x86_64-linux release asset (what
     `unpin` downloads), via the gh CLI. None when gh is missing, the repo
@@ -160,7 +184,7 @@ def discover_packages():
             "description": data.get("description") or "",
             "size":        fetch_download_size(name),
             "macos":       bool(data.get("macos")),
-            "windows":     bool(data.get("windows")),
+            "windows":     windows_backend(pkg_dir, bool(data.get("windows"))),
         })
     return rows
 
@@ -177,6 +201,19 @@ def os_cell(supported):
     return YES_CELL if supported else NO_CELL
 
 
+# The Windows ✓ for a Cosmopolitan-toolchain build carries a `*` keyed to the
+# note above the table — the shipped artifact is still an ordinary PE32+ .exe,
+# only the build toolchain differs.
+COSMO_CELL = ('<td class="os yes"><span aria-hidden="true">✓<sup>*</sup></span>'
+              '<span class="sr-only">yes, built with Cosmopolitan</span></td>')
+
+
+def windows_cell(backend):
+    if backend == "cosmo":
+        return COSMO_CELL
+    return YES_CELL if backend == "mingw" else NO_CELL
+
+
 def render_row(pkg):
     return (
         '            <tr>'
@@ -187,7 +224,7 @@ def render_row(pkg):
         f'<td class="size">{human_size(pkg["size"])}</td>'
         f'{os_cell(True)}'  # Linux: every catalog flake builds it
         f'{os_cell(pkg["macos"])}'
-        f'{os_cell(pkg["windows"])}'
+        f'{windows_cell(pkg["windows"])}'
         '</tr>'
     )
 
@@ -225,6 +262,9 @@ PAGE = """<!DOCTYPE html>
       <section>
         <p class="pkg-count">{count} packages, each a single self-contained binary. Install any of them with <code>unpin install &lt;name&gt;</code>.</p>
         <input type="search" id="pkg-filter" class="pkg-filter" placeholder="Filter packages…" aria-label="Filter packages">
+        <p class="pkg-note cosmo-note">
+          <strong>✓*</strong> in the Windows column marks programs whose Windows build is compiled with the <a href="https://github.com/jart/cosmopolitan">Cosmopolitan</a> toolchain — a POSIX-compatibility layer we use for programs the standard mingw cross can't build (those that assume <code>fork</code>, <code>waitpid</code>, or signals at runtime). The shipped file is still an ordinary Windows&nbsp;x86_64 <strong>PE32+ <code>.exe</code></strong> — the same single self-contained binary as every other Windows build, <em>not</em> a Cosmopolitan APE&nbsp;“fat”&nbsp;binary that runs on multiple OSes. A plain&nbsp;✓ is a mingw build; the distinction is only the build toolchain, never the shipped format.
+        </p>
         <div class="table-scroll">
         <table class="pkg-table">
           <thead>
