@@ -54,8 +54,11 @@ NIX_LIB = os.path.join(WORKSPACE, "nix-lib")
 #   unpin-readme — helper-verb package, same as unpin-man.
 #   mandoc-sys   — build glue behind `unpin man` (the mandoc -sys crate), not a
 #                  CLI; carries no description/license/release of its own.
+#   unterm, unterm-spike, cosmic-term-static — the terminal project, a product
+#                  of its own and not a catalog program.
 EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig", "unpin",
-           "unpin-man", "unpin-readme", "mandoc-sys"}
+           "unpin-man", "unpin-readme", "mandoc-sys",
+           "unterm", "unterm-spike", "cosmic-term-static"}
 
 # One eval per package returns everything the page needs. Pure Nix (no `lib`)
 # so it doesn't depend on a particular nixpkgs being in scope.
