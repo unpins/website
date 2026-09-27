@@ -27,7 +27,8 @@ OUT_PATH = os.path.join(SCRIPT_DIR, "status.html")
 # Same non-catalog set as gen-packages.py, plus mandoc-sys (build glue for
 # `unpin man`, no Build workflow — see gen-packages.py for the rest).
 EXCLUDE = {"nix-lib", "cosmocc", "unpin-zig", "unpin",
-           "unpin-man", "unpin-readme", "mandoc-sys"}
+           "unpin-man", "unpin-readme", "mandoc-sys",
+           "unterm", "unterm-spike", "cosmic-term-static"}
 
 
 def build_workflow(name):
